@@ -24,6 +24,7 @@ public class Photo {
         try {
             this.photo = ImageIO.read(new File("donnees/lena.png")); //ptet mettre ça dans le Main, à voir
         } catch (IOException e) {
+            System.out.println("Fichier introuvable, réessayez !");
         }
     }
 
@@ -69,9 +70,5 @@ public class Photo {
         frame.getContentPane().add(new JLabel(new ImageIcon(image.photoBruitee)));
         frame.pack();
         frame.setVisible(true);
-
     }
-
-    
-
 }
