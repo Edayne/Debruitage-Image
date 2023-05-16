@@ -8,8 +8,4 @@ ahdfjia	fhiaf
 	}
 
 }
-<<<<<<< HEAD
 gftrgg
-=======
-//cc
->>>>>>> 6ba9d68c2b92b369f81b916337d54ceda2bb48d6
