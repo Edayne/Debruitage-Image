@@ -61,6 +61,7 @@ public class Photo {
         }
     }
     
+    
     //Main
     public static void main(String[] args) {
         Photo image = new Photo();
