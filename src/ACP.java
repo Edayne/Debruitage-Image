@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.awt.List;
 import java.awt.image.BufferedImage;
 import Jama.Matrix;
 import Jama.EigenvalueDecomposition;
@@ -179,4 +180,22 @@ public class ACP {
 
     }
 
+    public double[][] Proj(double[][] U, double[][] V_centree ){
+        double[][] projection = new double[V_centree.length][U[0].length];
+        int k;
+        k=0;
+        double coef;
+        for (double[] vecteur : V_centree) {
+            for (int i=0; i<U[0].length;i++) {
+                coef=0;
+                for(int j=0; j<vecteur.length;j++) {
+                   coef+= vecteur[j]*U[i][j];
+                }
+                projection[k][i]= coef;
+                k++;
+            }
+            k=0;
+        }
+        return projection;
+    }
 }
