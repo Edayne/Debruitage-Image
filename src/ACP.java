@@ -164,10 +164,6 @@ public class ACP {
         }
         return Vc;
     }
-<<<<<<< HEAD
-
-
-
 
     public List<List<Double>> Proj(List<List<Double>> U, List<List<Double>> V_centree ){
         List<List<Double>> projection = new ArrayList<>();
@@ -182,14 +178,10 @@ public class ACP {
                 }
                 projection.get(k).set(i, coef);
                 k++;
-                
             }
             k=0;
-            
         }
         
-         return projection;
-     }
-=======
->>>>>>> b33a1c8a44399f70df4e756f8e02721a444bbbb6
+        return projection;
+    }
 }
