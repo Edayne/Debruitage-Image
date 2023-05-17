@@ -118,8 +118,8 @@ public class ACP {
         double[][] Gamma = new double[dimV][dimV]; //Stocker la matrice de Covariance
         for (int j=0; j<dimV; j++){ //Pour les lignes
             for (int k=0; k<dimV; k++){ //Pour les colonnes
-            double somme = 0.0; //j'initialise somme à 0
-                for (int i=0; i<nb_echantillon; i++){ //Pour chaque échantillon
+            double somme = 0.0; 
+                for (int i=0; i<nb_echantillon; i++){ //Pour chaque vecteur
                     somme += (V[i][j] - mV[j])*(V[i][k] - mV[k]); //Cela calcule la covariance entre j,k et i
                 }
                 Gamma[j][k] = somme/(nb_echantillon-1);
