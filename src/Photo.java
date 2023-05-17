@@ -79,6 +79,7 @@ public class Photo {
         photoBruitee.setRGB(0, 7, 255);
     }
     
+    
     //Main
     public static void main(String[] args) {
         Photo image = new Photo();
