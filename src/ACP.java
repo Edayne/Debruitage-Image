@@ -122,8 +122,6 @@ public class ACP {
         return mV;   
     }
     
-}
-
     public double[][] calculMatriceCovariance(double[][] V){
         int nb_echantillon = V.length; // Nb_échantillon prend le nombre de ligne de V
         int dimV = V[0].length; // Nb éléments dans chaque vecteur ici je considère qu'ils font tous la même taille
@@ -142,3 +140,20 @@ public class ACP {
         }
         return Gamma;
     }
+
+    public static double[][] calculerVecteursCentres(double[][] V) {
+        int nbEchantillons = V.length;
+        int nbCaracteristiques = V[0].length;
+
+        double[] mV = calculVecteurMoyen(V);
+
+        double[][] Vc = new double[nbEchantillons][nbCaracteristiques];
+        for (int i = 0; i < nbEchantillons; i++) {
+            for (int j = 0; j < nbCaracteristiques; j++) {
+                Vc[i][j] = V[i][j] - mV[j];
+            }
+        }
+        return Vc;
+    }
+
+}
