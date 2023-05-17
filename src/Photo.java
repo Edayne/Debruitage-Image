@@ -16,7 +16,8 @@ public class Photo {
     //Attributes
     private BufferedImage photo;
     private BufferedImage photoBruitee;
-    private Integer[] taille = new Integer[2]; //Tableau de taille 2 permettant de stocker l, nb lignes, et c, nb colonnes
+    private int nbL;
+    private int nbC;
 
     //Constructeurs
     public Photo() {
@@ -50,15 +51,32 @@ public class Photo {
      *//* */
     public void noising(BufferedImage photo, double sigma) {
         this.photoBruitee = photo;
-        taille[0] = photo.getHeight();
-        taille[1] = photo.getWidth();
-        for(int i=0; i<taille[0];i++){
-            for(int j=0; j<taille[1];j++){
-                photoBruitee.setRGB(i, j, 0);
+        nbL = photo.getHeight();
+        nbC = photo.getWidth();
+        for(int i=0; i<nbL;i++){
+            for(int j=0; j<nbL;j++){
+                System.out.println(photo.getRGB(i,j));
                 Random random = new Random();
-                photoBruitee.setRGB(i, j, (int) (random.nextGaussian()*sigma));
+                int newPixel ;
+                newPixel = (photo.getRGB(i,j)& 0xff) +(int) (random.nextGaussian()*sigma);
+                if(newPixel < 0){
+                    newPixel=0;
+                }else if(newPixel>255){
+                    newPixel=255;
+                }
+                //int newGreyPixel =  (newPixel << 16) | (newPixel << 8) | newPixel;
+                //System.out.println("np = " + -newGreyPixel);
+                photoBruitee.setRGB(i, j, newPixel);
             }
         }
+        photoBruitee.setRGB(0, 0, 255);
+        photoBruitee.setRGB(0, 1, 200);
+        photoBruitee.setRGB(0, 2, 100);
+        photoBruitee.setRGB(0, 3, 50);
+        photoBruitee.setRGB(0, 4, 50);
+        photoBruitee.setRGB(0, 5, 50);
+        photoBruitee.setRGB(0, 6, 255);
+        photoBruitee.setRGB(0, 7, 255);
     }
     
     //Main
