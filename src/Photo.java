@@ -78,7 +78,7 @@ public class Photo {
     //Main
     public static void main(String[] args) {
         Photo image = new Photo();
-        image.noising(image.photo, 20);
+        image.noising(image.photo, 10);
         JFrame frame = new JFrame();
         frame.getContentPane().setLayout(new FlowLayout());
         frame.getContentPane().add(new JLabel(new ImageIcon(image.photoBruitee)));
