@@ -43,11 +43,9 @@ public class Photo {
         this.photo = photo;
     }
 
-   /* 
-   */ /**
-     * 
-     * @return BufferedImage return la photo bruité
-     *//* */
+    /**
+     * @return BufferedImage return la photo bruitée
+     */
     public void noising(BufferedImage photo, double sigma) {
         this.photoBruitee = photo;
         taille[0] = photo.getHeight();
@@ -59,6 +57,15 @@ public class Photo {
                 photoBruitee.setRGB(i, j, (int) (random.nextGaussian()*sigma));
             }
         }
+    }
+
+    /**
+     * Extrait une collection de patchs d'une image bruitée
+     * @param s Entier représentant la taille d'un patch
+     * @return une liste dynamique de patchs
+     */
+    public ArrayList<Patch> extractPatchs(int s) {
+        
     }
     
     //Main
