@@ -107,35 +107,43 @@ public class ACP {
         return PSNR;
     }
 
-
+    /**
+     * 
+     * @param V Tableau de patchs vectorisées
+     * @return Renvoit le vecteur moyen des patchs
+     */
     public double[] calculVecteurMoyen(double[][] V){
-        int nb_echantillon = V.length; // Nb_échantillon prend le nombre de ligne de V
+        int nb_vecteurs = V.length; // Nb_échantillon prend le nombre de ligne de V
         int dimV = V[0].length; // Nb éléments dans chaque vecteur ici je considère qu'ils font tous la même taille
         double[] mV = new double[dimV]; //mV va stocker le vecteur moyen 
         for (int j=0; j<dimV; j++){
-            double somme = 0.0; //j'initialise somme à 0
-            for (int i=0; i<nb_echantillon; i++){ //Pour chaque échantillon
-                somme += V[i][j]; //somme prend à chaque itérés la somme du vecteur
+            double somme = 0.0; 
+            for (int i=0; i<nb_vecteurs; i++){ 
+                somme += V[i][j]; 
             }
-            mV[j] = somme/nb_echantillon; // Le vecteur moyen est égale à la somme des vecteurs divisé par le nb_échantillon
+            mV[j] = somme/nb_vecteurs; // Le vecteur moyen est égale à la somme des vecteurs divisé par le nombre de vecteurs
         }
         return mV;   
     }
-    
+    /**
+     * 
+     * @param V Tableau de patchs vectorisés
+     * @return Renvoit la matrice de covariance de ces vecteurs
+     */
     public double[][] calculMatriceCovariance(double[][] V){
-        int nb_echantillon = V.length; // Nb_échantillon prend le nombre de ligne de V
+        int nb_vecteurs = V.length; // Nb_échantillon prend le nombre de ligne de V
         int dimV = V[0].length; // Nb éléments dans chaque vecteur ici je considère qu'ils font tous la même taille
 
-        double[] mV = calculVecteurMoyen(V); //
+        double[] mV = calculVecteurMoyen(V); 
 
         double[][] Gamma = new double[dimV][dimV]; //Stocker la matrice de Covariance
         for (int j=0; j<dimV; j++){ //Pour les lignes
             for (int k=0; k<dimV; k++){ //Pour les colonnes
-            double somme = 0.0; 
-                for (int i=0; i<nb_echantillon; i++){ //Pour chaque vecteur
-                    somme += (V[i][j] - mV[j])*(V[i][k] - mV[k]); //Cela calcule la covariance entre j,k et i
+            double somme = 0.0; //j'initialise somme à 0
+                for (int i=0; i<nb_vecteurs; i++){ //Pour chaque échantillon
+                    somme += (V[i][j] - mV[j])*(V[i][k] - mV[k]); //Cela calcule la covariance entre Vj et Vk
                 }
-                Gamma[j][k] = somme/(nb_echantillon-1);
+                Gamma[j][k] = somme/(nb_vecteurs);
             }
         }
         return Gamma;
