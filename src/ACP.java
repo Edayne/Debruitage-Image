@@ -125,7 +125,11 @@ public class ACP {
         }
         return mV;   
     }
-    
+    /**
+     * 
+     * @param V Tableau de patchs vectorisés
+     * @return Renvoit la matrice de covariance de ces vecteurs
+     */
     public double[][] calculMatriceCovariance(double[][] V){
         int nb_vecteurs = V.length; // Nb_échantillon prend le nombre de ligne de V
         int dimV = V[0].length; // Nb éléments dans chaque vecteur ici je considère qu'ils font tous la même taille
