@@ -18,4 +18,4 @@ public class ACP {
     
 }
 
-    public double[][]
+    public double[][] calculMatriceCovariance(double[][]V)
