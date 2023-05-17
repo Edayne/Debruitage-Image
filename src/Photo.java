@@ -72,9 +72,7 @@ public class Photo {
      * @param s Entier représentant la taille d'un patch
      * @return une liste dynamique de patchs
      */
-    public ArrayList<Patch> extractPatchs(int s) {
-        
-    }
+    
     
     
     //Main
