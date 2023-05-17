@@ -48,12 +48,11 @@ public class Photo {
      * @return BufferedImage return la photo bruitée
      */
     public void noising(BufferedImage photo, double sigma) {
-        this.photoBruitee = photo;
         nbL = photo.getHeight();
         nbC = photo.getWidth();
+        this.photoBruitee = new BufferedImage(nbC, nbL, BufferedImage.TYPE_INT_RGB);
         for(int i=0; i<nbL;i++){
-            for(int j=0; j<nbL;j++){
-                System.out.println(photo.getRGB(i,j));
+            for(int j=0; j<nbC;j++){
                 Random random = new Random();
                 int newPixel ;
                 newPixel = (photo.getRGB(i,j)& 0xff) +(int) (random.nextGaussian()*sigma);
@@ -62,19 +61,10 @@ public class Photo {
                 }else if(newPixel>255){
                     newPixel=255;
                 }
-                //int newGreyPixel =  (newPixel << 16) | (newPixel << 8) | newPixel;
-                //System.out.println("np = " + -newGreyPixel);
-                photoBruitee.setRGB(i, j, newPixel);
+                int newGreyPixel =  (newPixel << 16) | (newPixel << 8) | newPixel;
+                photoBruitee.setRGB(i, j, newGreyPixel);
             }
         }
-        photoBruitee.setRGB(0, 0, 255);
-        photoBruitee.setRGB(0, 1, 200);
-        photoBruitee.setRGB(0, 2, 100);
-        photoBruitee.setRGB(0, 3, 50);
-        photoBruitee.setRGB(0, 4, 50);
-        photoBruitee.setRGB(0, 5, 50);
-        photoBruitee.setRGB(0, 6, 255);
-        photoBruitee.setRGB(0, 7, 255);
     }
 
     /**
@@ -82,15 +72,13 @@ public class Photo {
      * @param s Entier représentant la taille d'un patch
      * @return une liste dynamique de patchs
      */
-    public ArrayList<Patch> extractPatchs(int s) {
-        
-    }
+    
     
     
     //Main
     public static void main(String[] args) {
         Photo image = new Photo();
-        image.noising(image.photo, 10);
+        image.noising(image.photo, 20);
         JFrame frame = new JFrame();
         frame.getContentPane().setLayout(new FlowLayout());
         frame.getContentPane().add(new JLabel(new ImageIcon(image.photoBruitee)));
