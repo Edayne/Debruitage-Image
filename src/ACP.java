@@ -164,23 +164,22 @@ public class ACP {
         }
         return Vc;
     }
-<<<<<<< HEAD
 
 
 
 
-    public List<List<Double>> Proj(List<List<Double>> U, List<List<Double>> V_centree ){
-        List<List<Double>> projection = new ArrayList<>();
+    public double[][] Proj(double[][] U, double[][] V_centree ){
+        double[][] projection = new double[U[0].length][V_centree.length];
         int k;
         k=0;
         double coef;
-        for (List<Double> vecteur : V_centree) {
-            for (int i=0; i<U.get(1).size();i++) {
+        for (double[] vecteur : V_centree) {
+            for (int i=0; i<U[0].length;i++) {
                 coef=0;
-                for(int j=0; j<vecteur.size();j++) {
-                   coef+= vecteur.get(j)*U.get(i).get(j);
+                for(int j=0; j<vecteur.length;j++) {
+                   coef+= vecteur[j]*U[i][j];
                 }
-                projection.get(k).set(i, coef);
+                projection[k][i]= coef;
                 k++;
                 
             }
@@ -190,6 +189,4 @@ public class ACP {
         
          return projection;
      }
-=======
->>>>>>> b33a1c8a44399f70df4e756f8e02721a444bbbb6
 }
