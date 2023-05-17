@@ -1,5 +1,8 @@
 import java.util.ArrayList;
 import java.awt.image.BufferedImage;
+import Jama.Matrix;
+import Jama.EigenvalueDecomposition;
+
 
 public class ACP {
     /**
@@ -162,6 +165,18 @@ public class ACP {
             }
         }
         return Vc;
+    }
+
+    public double[][] acp (double[][] V){
+        double [][] covariance = calculMatriceCovariance(V);
+        //Décomposition en valeurs singulières
+        Matrix covMatrix = new Matrix(covariance);
+        EigenvalueDecomposition EvD = new EigenvalueDecomposition(covMatrix);
+        //Récupération de U
+        Matrix vectPropre = EvD.getV();
+        double[] valPropre = EvD.getRealEigenValues();
+
+        double seuilV = 
     }
 
 }
