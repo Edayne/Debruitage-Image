@@ -150,20 +150,21 @@ public class ACP {
         return Gamma;
     }
 
-    public static double[][] calculerVecteursCentres(double[][] V) {
-        int nbEchantillons = V.length;
-        int nbCaracteristiques = V[0].length;
+    public double[][] calculerVecteursCentres(double[][] V) {
+        int nb_vecteurs = V.length;
+        int dimV = V[0].length;
 
         double[] mV = calculVecteurMoyen(V);
 
-        double[][] Vc = new double[nbEchantillons][nbCaracteristiques];
-        for (int i = 0; i < nbEchantillons; i++) {
-            for (int j = 0; j < nbCaracteristiques; j++) {
+        double[][] Vc = new double[nb_vecteurs][dimV];
+        for (int i = 0; i < nb_vecteurs; i++) {
+            for (int j = 0; j < dimV; j++) {
                 Vc[i][j] = V[i][j] - mV[j];
             }
         }
         return Vc;
     }
+<<<<<<< HEAD
 
 
 
@@ -189,4 +190,6 @@ public class ACP {
         
          return projection;
      }
+=======
+>>>>>>> b33a1c8a44399f70df4e756f8e02721a444bbbb6
 }
