@@ -99,7 +99,7 @@ public class ACP {
         double[] mV = new double[dimV]; //mV va stocker le vecteur moyen 
         for (int j=0; j<dimV; j++){
             double somme = 0.0; //j'initialise somme à 0
-            for (int i=0; i<nb_echantillon; i++){
+            for (int i=0; i<nb_echantillon; i++){ //Pour chaque échantillon
                 somme += V[i][j]; //somme prend à chaque itérés la somme du vecteur
             }
             mV[j] = somme/nb_echantillon; // Le vecteur moyen est égale à la somme des vecteurs divisé par le nb_échantillon
@@ -115,12 +115,15 @@ public class ACP {
 
         double[] mV = calculVecteurMoyen(V); //
 
-        double[][] Gamma = new double[dimV][dimV];
-        for (int j=0; j<dimV; j++){
+        double[][] Gamma = new double[dimV][dimV]; //Stocker la matrice de Covariance
+        for (int j=0; j<dimV; j++){ //Pour les lignes
+            for (int k=0; k<dimV; k++){ //Pour les colonnes
             double somme = 0.0; //j'initialise somme à 0
-            for (int i=0; i<nb_echantillon; i++){
-                somme += 
+                for (int i=0; i<nb_echantillon; i++){ //Pour chaque échantillon
+                    somme += (V[i][j] - mV[j])*(V[i][k] - mV[k]); //Cela calcule la covariance entre j,k et i
+                }
+                Gamma[j][k] = somme/(nb_echantillon-1);
             }
         }
-        
+        return Gamma;
     }
