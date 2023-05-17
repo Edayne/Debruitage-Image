@@ -169,7 +169,9 @@ public class ACP {
 
 
     public double[][] Proj(double[][] U, double[][] V_centree ){
-        double[][] projection = new double[U[0].length][V_centree.length];
+
+
+        double[][] projection = new double[V_centree.length][U[0].length];
         int k;
         k=0;
         double coef;
