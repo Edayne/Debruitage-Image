@@ -149,7 +149,22 @@ public class ACP {
         }
         return Gamma;
     }
-    //ignorer
+
+    public static double[][] calculerVecteursCentres(double[][] V) {
+        int nbEchantillons = V.length;
+        int nbCaracteristiques = V[0].length;
+
+        double[] mV = calculVecteurMoyen(V);
+
+        double[][] Vc = new double[nbEchantillons][nbCaracteristiques];
+        for (int i = 0; i < nbEchantillons; i++) {
+            for (int j = 0; j < nbCaracteristiques; j++) {
+                Vc[i][j] = V[i][j] - mV[j];
+            }
+        }
+        return Vc;
+    }
+
 
 
 
