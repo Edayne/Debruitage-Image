@@ -2,38 +2,53 @@ import java.util.ArrayList;
 import java.awt.image.BufferedImage;
 
 public class ACP {
+    /**
+     * 
+     * @param l nb pixels de l'image
+     * @param s ecart-type du bruit
+     * @return renvoit le seuil calculé par la méthode VisuShrink
+     */
     public double VisuShrink(int l, double s){
         return(s*Math.sqrt(2*Math.log(l)));
     }
 
-
+    /**
+     * 
+     * @param s écart-type du bruit
+     * @param photo L'image bruitée
+     * @return
+     */
     public double BayesShrink(double s, BufferedImage photo){
-        int n;
-        n=0;
-        int p;
-        p=0;
-        for(int j=0;j<photo.getHeight();j++){
-            for (int i=0;i <photo.getWidth();i++){
-                n+=photo.getRGB(i,j);
-                p+=(photo.getRGB(i,j)*photo.getRGB(i,j));
-            }   	
+        int somme = 0;
+        int sommeCarr = 0;
+        int l = photo.getHeight();
+        int c = photo.getWidth();
+        for(int i=0; i<l; i++){
+            for (int j=0; j<c; j++){
+                somme += photo.getRGB(i,j)& 0xff;
+                sommeCarr += (photo.getRGB(i,j)& 0xff)*(photo.getRGB(i,j)& 0xff);
+            }
         }
         double moyenne;
-        double moy;
+        double moyCarr;
         double variance;
-        moyenne=n/(photo.getHeight()*photo.getWidth());
-        moy=p/(photo.getHeight()*photo.getWidth());
-        variance=moy-moyenne;
+        moyenne =somme/(l*c);
+        moyCarr=sommeCarr/(l*c);
+        variance=moyCarr-moyenne;
 
-        if (variance-s <=0){
+        if (variance-(s*s) <=0){
             return(0);
-
-
         }else{
-            return(Math.sqrt(variance-s));
+            return(Math.sqrt(variance-(s*s)));
         }
-
     }
+    
+    /**
+     * 
+     * @param seuil 
+     * @param coefficients
+     * @return
+     */
     public ArrayList<Double> seuillageDur(double seuil, ArrayList<Double> coefficients){
         ArrayList<Double> resultat = new ArrayList<Double>(); //Créer tableau résultat de même taille que coefficients et qui va stocker le résultat du seuillage dur
         int n = coefficients.size();
