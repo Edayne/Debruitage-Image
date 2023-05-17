@@ -169,14 +169,14 @@ public class ACP {
 
     public double[][] acp (double[][] V){
         double [][] covariance = calculMatriceCovariance(V);
-        //Décomposition en valeurs singulières
+        //On récupère les valeurs propres de Cov
         Matrix covMatrix = new Matrix(covariance);
         EigenvalueDecomposition EvD = new EigenvalueDecomposition(covMatrix);
-        //Récupération de U
-        Matrix vectPropre = EvD.getV();
-        double[] valPropre = EvD.getRealEigenValues();
+        
+        Matrix vectPropre = EvD.getV(); //Matrice des vecteurs propres 
+        double[] valPropre = EvD.getRealEigenValues(); //Tableau de valeurs propres
 
-        double seuilV = 
+
     }
 
 }
