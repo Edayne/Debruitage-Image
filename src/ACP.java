@@ -75,7 +75,7 @@ public class ACP {
                 resultat.add(0.0); //Si valeur absolue du coefficient est inférieure au seuil alors notre coefficients va valoir 
             }
             else if((coefficients.get(i)) > seuil){
-                resultat.add(coefficients.get(i)-seuil); //Si valeur  du coefficient est inférieure au seuil alors notre coefficients va valoir notre coefficient plus le seuil
+                resultat.add(coefficients.get(i)-seuil); //Si valeur  du coefficient est inférieure au seuil alors notre coefficients va valoir notre coefficient moins le seuil
             }
             else{
                 resultat.add(coefficients.get(i)+seuil); //Sinon valeur du coefficient va valoir notre coefficient plus le seuil
