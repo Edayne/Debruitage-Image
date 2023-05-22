@@ -43,7 +43,7 @@ public class ACP {
         if (variance-(s*s) <=0){
             return(0);
         }else{
-            return(Math.sqrt(variance-(s*s)));
+            return((s*s)/Math.sqrt(variance-(s*s)));
         }
     }
     
