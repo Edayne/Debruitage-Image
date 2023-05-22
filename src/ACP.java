@@ -2,7 +2,8 @@ import java.util.ArrayList;
 import java.awt.List;
 import java.awt.image.BufferedImage;
 import Jama.Matrix;
-import Jama.SingularValueDecomposition;
+import Jama.EigenvalueDecomposition;
+
 
 public class ACP {
     /**
@@ -165,6 +166,18 @@ public class ACP {
             }
         }
         return Vc;
+    }
+
+    public double[][] acp (double[][] V){
+        double [][] covariance = calculMatriceCovariance(V);
+        //On récupère les valeurs propres de Cov
+        Matrix covMatrix = new Matrix(covariance);
+        EigenvalueDecomposition EvD = new EigenvalueDecomposition(covMatrix);
+        
+        Matrix vectPropre = EvD.getV(); //Matrice des vecteurs propres 
+        double[] valPropre = EvD.getRealEigenValues(); //Tableau de valeurs propres
+
+
     }
 
     public double[][] Proj(double[][] U, double[][] V_centree ){
