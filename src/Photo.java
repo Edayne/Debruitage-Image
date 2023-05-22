@@ -16,7 +16,8 @@ public class Photo {
     //Attributes
     private BufferedImage photo;
     private BufferedImage photoBruitee;
-    private Integer[] taille = new Integer[2]; //Tableau de taille 2 permettant de stocker l, nb lignes, et c, nb colonnes
+    private int nbL;
+    private int nbC;
 
     //Constructeurs
     public Photo() {
@@ -43,23 +44,35 @@ public class Photo {
         this.photo = photo;
     }
 
-   /* 
-   */ /**
-     * 
-     * @return BufferedImage return la photo bruité
-     *//* */
+    /**
+     * @return BufferedImage return la photo bruitée
+     */
     public void noising(BufferedImage photo, double sigma) {
-        this.photoBruitee = photo;
-        taille[0] = photo.getHeight();
-        taille[1] = photo.getWidth();
-        for(int i=0; i<taille[0];i++){
-            for(int j=0; j<taille[1];j++){
-                photoBruitee.setRGB(i, j, 0);
+        nbL = photo.getHeight();
+        nbC = photo.getWidth();
+        this.photoBruitee = new BufferedImage(nbC, nbL, BufferedImage.TYPE_INT_RGB);
+        for(int i=0; i<nbL;i++){
+            for(int j=0; j<nbC;j++){
                 Random random = new Random();
-                photoBruitee.setRGB(i, j, (int) (random.nextGaussian()*sigma));
+                int newPixel ;
+                newPixel = (photo.getRGB(i,j)& 0xff) +(int) (random.nextGaussian()*sigma);
+                if(newPixel < 0){
+                    newPixel=0;
+                }else if(newPixel>255){
+                    newPixel=255;
+                }
+                int newGreyPixel =  (newPixel << 16) | (newPixel << 8) | newPixel;
+                photoBruitee.setRGB(i, j, newGreyPixel);
             }
         }
     }
+
+    /**
+     * Extrait une collection de patchs d'une image bruitée
+     * @param s Entier représentant la taille d'un patch
+     * @return une liste dynamique de patchs
+     */
+    
     
     
     //Main
