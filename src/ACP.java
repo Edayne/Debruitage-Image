@@ -192,10 +192,8 @@ public class ACP {
                    coef+= vecteur[j]*U[i][j];
                 }
                 projection[k][i]= coef;
-                k++;
-                
             }
-            k=0;
+            k++;
             
         }
         return projection;
