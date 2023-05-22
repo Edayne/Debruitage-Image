@@ -43,7 +43,7 @@ public class ACP {
         if (variance-(s*s) <=0){
             return(0);
         }else{
-            return(Math.sqrt(variance-(s*s)));
+            return((s*s)/Math.sqrt(variance-(s*s)));
         }
     }
     
@@ -53,32 +53,40 @@ public class ACP {
      * @param coefficients
      * @return
      */
-    public ArrayList<Double> seuillageDur(double seuil, ArrayList<Double> coefficients){
-        ArrayList<Double> resultat = new ArrayList<Double>(); //Créer tableau résultat de même taille que coefficients et qui va stocker le résultat du seuillage dur
-        int n = coefficients.size();
+    public double[][] seuillageDur(double seuil, double[][] coefficients){
+        int n = coefficients.length;
+        int m = coefficients[0].length;
+        double[][] resultat = new double[n][m]; //Créer tableau résultat de même taille que coefficients et qui va stocker le résultat du seuillage dur
         
         for (int i = 0; i < n; i++){ // On parcours tous les itérés du tableau 
-            if(Math.abs(coefficients.get(i)) <= seuil){
-                resultat.add(0.0); //Si valeur absolue du coefficients est inférieure au seuil alors notre coefficients va valoir 
-            }else{
-                resultat.add(coefficients.get(i)); // Sinon il reste inchangé
+            for (int j=0; j<m; j++){
+                if(Math.abs(coefficients[i][j]) <= seuil){
+                    resultat[i][j] = 0.0; //Si valeur absolue du coefficients est inférieure au seuil alors notre coefficient va valoir 0
+                }else{
+                    resultat[i][j] = coefficients[i][j]; // Sinon il reste inchangé
+                }
             }
         }
         return resultat;
     }
-    public ArrayList<Double> seuillageDoux(double seuil, ArrayList<Double> coefficients){
-        ArrayList<Double> resultat = new ArrayList<Double>(); //créer tableau résultat de même taille que coefficients et qui va stocker le résultat du seuillage dur
-        int n = coefficients.size();
+
+    public double[][] seuillageDoux(double seuil, double[][] coefficients){
+        int n = coefficients.length;
+        int m = coefficients[0].length;
+        double[][] resultat = new double[n][m]; //créer tableau résultat de même taille que coefficients et qui va stocker le résultat du seuillage dur
+        
         
         for (int i = 0; i < n; i++){ // On parcours tous les itérés du tableau 
-            if(Math.abs(coefficients.get(i)) <= seuil){
-                resultat.add(0.0); //Si valeur absolue du coefficient est inférieure au seuil alors notre coefficients va valoir 
-            }
-            else if((coefficients.get(i)) > seuil){
-                resultat.add(coefficients.get(i)-seuil); //Si valeur  du coefficient est inférieure au seuil alors notre coefficients va valoir notre coefficient plus le seuil
-            }
-            else{
-                resultat.add(coefficients.get(i)+seuil); //Sinon valeur du coefficient va valoir notre coefficient plus le seuil
+            for (int j=0; j<m; j++) {
+                if(Math.abs(coefficients[i][j]) <= seuil){
+                    resultat[i][j] = 0.0; //Si valeur absolue du coefficient est inférieure au seuil alors notre coefficients va valoir 
+                }
+                else if((coefficients[i][j]) > seuil){
+                    resultat[i][j] = coefficients[i][j]-seuil; //Si valeur  du coefficient est inférieure au seuil alors notre coefficients va valoir notre coefficient moins le seuil
+                }
+                else{
+                    resultat[i][j] = coefficients[i][j]+seuil; //Sinon valeur du coefficient va valoir notre coefficient plus le seuil
+                }
             }
         }
         return resultat;
@@ -192,9 +200,9 @@ public class ACP {
                    coef+= vecteur[j]*U[i][j];
                 }
                 projection[k][i]= coef;
-                k++;
             }
-            k=0;
+            k++;
+            
         }
         return projection;
     }
