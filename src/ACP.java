@@ -1,6 +1,9 @@
 import java.util.ArrayList;
 import java.awt.List;
 import java.awt.image.BufferedImage;
+import Jama.Matrix;
+import Jama.EigenvalueDecomposition;
+
 
 public class ACP {
     /**
@@ -72,7 +75,7 @@ public class ACP {
                 resultat.add(0.0); //Si valeur absolue du coefficient est inférieure au seuil alors notre coefficients va valoir 
             }
             else if((coefficients.get(i)) > seuil){
-                resultat.add(coefficients.get(i)-seuil); //Si valeur  du coefficient est inférieure au seuil alors notre coefficients va valoir notre coefficient plus le seuil
+                resultat.add(coefficients.get(i)-seuil); //Si valeur  du coefficient est inférieure au seuil alors notre coefficients va valoir notre coefficient moins le seuil
             }
             else{
                 resultat.add(coefficients.get(i)+seuil); //Sinon valeur du coefficient va valoir notre coefficient plus le seuil
@@ -165,12 +168,19 @@ public class ACP {
         return Vc;
     }
 
+    public double[][] acp (double[][] V){
+        double [][] covariance = calculMatriceCovariance(V);
+        //On récupère les valeurs propres de Cov
+        Matrix covMatrix = new Matrix(covariance);
+        EigenvalueDecomposition EvD = new EigenvalueDecomposition(covMatrix);
+        
+        Matrix vectPropre = EvD.getV(); //Matrice des vecteurs propres 
+        double[] valPropre = EvD.getRealEigenValues(); //Tableau de valeurs propres
 
 
+    }
 
     public double[][] Proj(double[][] U, double[][] V_centree ){
-
-        
         double[][] projection = new double[V_centree.length][U[0].length];
         int k;
         k=0;
@@ -181,12 +191,13 @@ public class ACP {
                 for(int j=0; j<vecteur.length;j++) {
                    coef+= vecteur[j]*U[i][j];
                 }
-                projection[k][i]= coef;          
+                projection[k][i]= coef;
+                k++;
+                
             }
-            k++;
+            k=0;
             
         }
-        
-         return projection;
-     }
+        return projection;
+    }
 }
