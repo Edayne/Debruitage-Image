@@ -1,17 +1,11 @@
-import java.util.ArrayList;
-import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferByte;
-import java.io.IOException;
-import javax.imageio.ImageIO;
-
+//salut
 public class Main {
-	BufferedImage image = new BufferedImage(null, null, false, null);
 
-	// ImageIO.read(PerformanceTest.class.getResource("donnees/lena.jpg"));
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-
+		//uygug
+ahdfjia	fhiaf;
 	}
 
-	BufferedImage hugeImage = ImageIO.read(PerformanceTest.class.getResource("donnees/lena.jpg"));
 }
+//cc
