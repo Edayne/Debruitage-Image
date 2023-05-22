@@ -17,7 +17,7 @@ public class Patch extends Photo{
                 for(int a=j-1; a<=j+s-2;a++){
                     listC.add(a%l + 1);
                 }
-                Y[i][j][]= 
+                Y[i][j][] = 
             }
         } 
     }
