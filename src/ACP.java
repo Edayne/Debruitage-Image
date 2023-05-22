@@ -170,7 +170,7 @@ public class ACP {
 
     public double[][] Proj(double[][] U, double[][] V_centree ){
 
-
+        
         double[][] projection = new double[V_centree.length][U[0].length];
         int k;
         k=0;
@@ -181,11 +181,9 @@ public class ACP {
                 for(int j=0; j<vecteur.length;j++) {
                    coef+= vecteur[j]*U[i][j];
                 }
-                projection[k][i]= coef;
-                k++;
-                
+                projection[k][i]= coef;          
             }
-            k=0;
+            k++;
             
         }
         
