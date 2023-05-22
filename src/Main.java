@@ -13,5 +13,5 @@ public class Main {
 
 	}
 
-	BufferedImage hugeImage = ImageIO.read(PerformanceTest.class.getResource("donnees/lena.jpg"));
+	
 }
