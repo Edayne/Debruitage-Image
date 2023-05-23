@@ -2,23 +2,51 @@ import java.awt.image.BufferedImage;
 import java.util.*;
 
 public class Patch extends Photo{
-    public void extractPatchs(BufferedImage photo, int s) {
+        private int[][] pixels;
+        public Patch(int[][] pixels) {
+            this.pixels = pixels;
+        }
+
+    private static int getPixelValue(BufferedImage image, int l, int c) {
+        int rgb = image.getRGB(c, l);
+        return (rgb >> 16) & 0xFF; // Extracting red channel value (assuming 8-bit/channel grayscale image)
+    }
+
+    public List<Patch> extractPatchs(BufferedImage photo, int s) {
         int l = photo.getHeight();
         int c = photo.getWidth();
-        int [][][] Y = new int[l-s+1][c-s+1][s*s];
-        int [][] Pos_patchs = new int[l][c];
-        List<Integer> listL = new ArrayList<Integer>();
-        List<Integer> listC = new ArrayList<Integer>();
-        for(int i=1; i<l-s+1;i++){
-            for(int j=1; j<c-s+1;j++){
-                for(int k=i-1;i<=i+s-2;k++){
-                    listL.add(k%l + 1);
+        List<Patch> patches = new ArrayList<>();
+        int [][] pospat = new int[l][c];
+        for(int i=0; i<l-s+1;i++){
+            for(int j=0; j<c-s+1;j++){
+                List<Integer> listL = new ArrayList<>();
+                List<Integer> listC = new ArrayList<>();
+                for(int k=i; k< i+s;k++){
+                    listL.add((k%l)+1);
                 }
-                for(int a=j-1; a<=j+s-2;a++){
-                    listC.add(a%l + 1);
+                for(int k=j ; k<j+s; k++){
+                    listC.add((k%c)+1);
                 }
-                Y[i][j][] = 
+
+                int [][] patch = new int[s][s];
+                for(int k=0; k< s; k++){
+                    for(int m=0; m< s; m++){
+                        patch[k][m] = getPixelValue(photo, listL.get(k)-1, listC.get(m)-1);
+                    }
+                }
+
+                patches.add(new Patch(patch));
+                updatePospat(pospat,listL,listC);
             }
-        } 
+        }
+        return patches;
+    }
+
+    private static void updatePospat(int[][] pospat, List<Integer> listL, List<Integer> listC) {
+        for (int i = 0; i < listL.size(); i++) {
+            for (int j = 0; j < listC.size(); j++) {
+                pospat[listL.get(i) - 1][listC.get(j) - 1]++;
+            }
+        }
     }
 }
