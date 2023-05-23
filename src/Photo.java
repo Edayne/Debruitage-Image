@@ -109,7 +109,7 @@ public class Photo {
      * @param s Entier représentant la taille d'un patch
      * @return une liste dynamique de patchs
      */
-    private static int getPixelValue(BufferedImage image, int l, int c) {
+    public static int getPixelValue(BufferedImage image, int l, int c) {
         int rgb = image.getRGB(c, l);
         return (rgb >> 16) & 0xFF; // Extracting red channel value (assuming 8-bit/channel grayscale image)
     }
@@ -144,7 +144,7 @@ public class Photo {
         return listPatches;
     }
 
-    private static void updatePospat(int[][] pospat, List<Integer> listL, List<Integer> listC) {
+    public static void updatePospat(int[][] pospat, List<Integer> listL, List<Integer> listC) {
         for (int i = 0; i < listL.size(); i++) {
             for (int j = 0; j < listC.size(); j++) {
                 pospat[listL.get(i)][listC.get(j)]++;
@@ -152,12 +152,55 @@ public class Photo {
         }
     }
     
-    
-    //Main
-    public static void main(String[] args) {
-        //RINE
+    public BufferedImage arrayToImage(int[][] matrix) {
+        int width = matrix.length;
+        int height = matrix[0].length;
+        BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[0].length; j++) {
+                int pixel=matrix[i][j];
+                System.out.println("The pixel in Matrix: "+pixel);
+                bufferedImage.setRGB(i, j, pixel);
+                System.out.println("The pixel in BufferedImage: " + bufferedImage.getRGB(i, j));
+            }
+        }
+        return bufferedImage;
     }
 
-    
+    public int[][] imageToArray(BufferedImage bufferedImage) {
+        int width = bufferedImage.getWidth(null);
+        int height = bufferedImage.getHeight(null);
+        int[][] pixels = new int[width][height];
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                pixels[i][j] = bufferedImage.getRGB(i, j);
+            }
+        }
+        return pixels;
+    }
 
+    public BufferedImage reconstructPatch(List<int[][]> listPatchs, int[][] posPatchs) {
+        int s = listPatchs.get(0).length; //Taille d'un patch
+        int L = posPatchs.length;
+        int C = posPatchs[0].length;
+        int[][] sommePatch = new int[L][C];
+        for (int j = 0; j < C-s; j++){
+            for (int i = 0; i < L-s; i++) {
+                int[][] patchActuel = new int[s][s];
+                for (int iPatch = 0; iPatch<s; iPatch++){
+                    for (int jPatch = 0; jPatch<s; jPatch++) {
+                        sommePatch[i][j] += patchActuel[iPatch][jPatch];
+                    }
+                }
+            }
+        }
+        for (int i = 0; i < L; i++) {
+            for (int j = 0; j < C; j++) {
+                sommePatch[i][j] /= posPatchs[i][j];
+            }
+        }
+        
+        BufferedImage image = arrayToImage(sommePatch);
+        return image;
+    }
 }
