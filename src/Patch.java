@@ -42,7 +42,7 @@ public class Patch extends Photo{
     private static void updatePospat(int[][] pospat, List<Integer> listL, List<Integer> listC) {
         for (int i = 0; i < listL.size(); i++) {
             for (int j = 0; j < listC.size(); j++) {
-                pospat[listL.get(i) - 1][listC.get(j) - 1]++;
+                pospat[listL.get(i)][listC.get(j)]++;
             }
         }
     }

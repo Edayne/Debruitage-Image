@@ -23,7 +23,7 @@ public class Photo {
     public Photo() {
         this.photo = null;
         try {
-            this.photo = ImageIO.read(new File("donnees/lena.png")); //ptet mettre ça dans le Main, à voir
+            this.photo = ImageIO.read(new File("../donnees/lena.png")); //ptet mettre ça dans le Main, à voir
         } catch (IOException e) {
             System.out.println("Fichier introuvable, réessayez !");
         }
@@ -42,6 +42,47 @@ public class Photo {
      */
     public void setPhoto(BufferedImage photo) {
         this.photo = photo;
+    }
+    /**
+     * @return BufferedImage return the photoBruitee
+     */
+    public BufferedImage getPhotoBruitee() {
+        return photoBruitee;
+    }
+
+    /**
+     * @param photoBruitee the photoBruitee to set
+     */
+    public void setPhotoBruitee(BufferedImage photoBruitee) {
+        this.photoBruitee = photoBruitee;
+    }
+
+    /**
+     * @return int return the nbL
+     */
+    public int getNbL() {
+        return nbL;
+    }
+
+    /**
+     * @param nbL the nbL to set
+     */
+    public void setNbL(int nbL) {
+        this.nbL = nbL;
+    }
+
+    /**
+     * @return int return the nbC
+     */
+    public int getNbC() {
+        return nbC;
+    }
+
+    /**
+     * @param nbC the nbC to set
+     */
+    public void setNbC(int nbC) {
+        this.nbC = nbC;
     }
 
     /**
@@ -77,12 +118,9 @@ public class Photo {
     
     //Main
     public static void main(String[] args) {
-        Photo image = new Photo();
-        image.noising(image.photo, 10);
-        JFrame frame = new JFrame();
-        frame.getContentPane().setLayout(new FlowLayout());
-        frame.getContentPane().add(new JLabel(new ImageIcon(image.photoBruitee)));
-        frame.pack();
-        frame.setVisible(true);
+        //RINE
     }
+
+    
+
 }
