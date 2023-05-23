@@ -22,6 +22,7 @@ public class Main {
         frame.pack();
         frame.setVisible(true);
 
-        
+        System.out.println("Execution de l'extraction des patchs");
+        System.out.println(lena.extractPatchs(lena.getPhotoBruitee(), 15));
     }
 }
