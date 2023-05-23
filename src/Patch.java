@@ -2,20 +2,17 @@ import java.awt.image.BufferedImage;
 import java.util.*;
 
 public class Patch extends Photo{
-        private int[][] pixels;
-        public Patch(int[][] pixels) {
-            this.pixels = pixels;
-        }
+        
 
     private static int getPixelValue(BufferedImage image, int l, int c) {
         int rgb = image.getRGB(c, l);
         return (rgb >> 16) & 0xFF; // Extracting red channel value (assuming 8-bit/channel grayscale image)
     }
 
-    public List<Patch> extractPatchs(BufferedImage photo, int s) {
+    public List<int[][]> extractPatchs(BufferedImage photo, int s) {
         int l = photo.getHeight();
         int c = photo.getWidth();
-        List<Patch> patches = new ArrayList<>();
+        List<int[][]> patches = new ArrayList<>();
         int [][] pospat = new int[l][c];
         for(int i=0; i<l-s+1;i++){
             for(int j=0; j<c-s+1;j++){
@@ -35,7 +32,7 @@ public class Patch extends Photo{
                     }
                 }
 
-                patches.add(new Patch(patch));
+                patches.add(patch);
                 updatePospat(pospat,listL,listC);
             }
         }
