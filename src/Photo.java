@@ -277,4 +277,8 @@ public class Photo {
 
         return listPatchVect;
     }
+
+    public BufferedImage imageDebruit(){
+
+    }
 }

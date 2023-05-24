@@ -184,7 +184,7 @@ public class ACP {
         
         Matrix vectPropre = EvD.getV(); //Matrice des vecteurs propres 
         double[] valPropre = EvD.getRealEigenValues(); //Tableau de valeurs propres
-
+        
 
     }
 
