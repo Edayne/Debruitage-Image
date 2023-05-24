@@ -176,19 +176,7 @@ public class ACP {
         }
         return Vc;
     }
-
-    public double[][] acp (double[][] V){
-        double [][] covariance = calculMatriceCovariance(V);
-        //On récupère les valeurs propres de Cov
-        Matrix covMatrix = new Matrix(covariance);
-        EigenvalueDecomposition EvD = new EigenvalueDecomposition(covMatrix);
-        
-        Matrix vectPropre = EvD.getV(); //Matrice des vecteurs propres 
-        double[] valPropre = EvD.getRealEigenValues(); //Tableau de valeurs propres
-
-
-    }
-
+    
     public Matrix vecteurnormalise (Matrix vectPropre){
         int nbL = vectPropre.getRowDimension(); //Récupère nombre ligne
         int nbC = vectPropre.getColumnDimension(); //Récupère nombre colonne
@@ -200,6 +188,22 @@ public class ACP {
         }
         return vectPropre;
     }
+
+    public double[][] acp (double[][] V){
+        double [][] covariance = calculMatriceCovariance(V);
+        //On récupère les valeurs propres de Cov
+        Matrix covMatrix = new Matrix(covariance);
+        EigenvalueDecomposition EvD = new EigenvalueDecomposition(covMatrix);
+        
+        Matrix vectPropre = EvD.getV(); //Matrice des vecteurs propres 
+        double[][] vect =  vecteurnormalise(vectPropre).getArray();
+        return vect;
+        
+
+
+    }
+
+
 
     public double[][] Proj(double[][] U, double[][] V_centree ){
         double[][] projection = new double[V_centree.length][U[0].length];

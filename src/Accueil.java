@@ -7,7 +7,6 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-import com.sun.prism.Image;
 
 import javafx.application.Application;
 import javafx.collections.FXCollections;
