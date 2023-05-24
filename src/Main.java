@@ -12,7 +12,7 @@ public class Main {
 
 	// ImageIO.read(PerformanceTest.class.getResource("donnees/lena.jpg"));
 	public static void main(String[] args) throws IOException {
-		Photo lena = new Photo();
+		Photo lena = new Photo("donnees/lena.png");
 
 		lena.noising(lena.getPhoto(), 20);
 
