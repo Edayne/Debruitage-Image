@@ -1,7 +1,9 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.awt.font.ImageGraphicAttribute;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.nio.Buffer;
 
 import javax.imageio.ImageIO;
 import java.io.File;
@@ -200,8 +202,43 @@ public class Photo {
             }
         }
         
-        BufferedImage image = arrayToImage(sommePatch);
+        BufferedImage image = arrayToImage(sommePatch); //On convertit la matrice en un format d'image
         return image;
     }
+
+    public ArrayList<BufferedImage> decoupeImage(BufferedImage photo, int tailleW){
+        ArrayList<BufferedImage> listImagette = new ArrayList<>();
+        int L = photo.getHeight();
+        int C = photo.getWidth();
+        int nbImL = L/tailleW; 
+        int nbImC = C/tailleW;
+        for (int i = 0; i < nbImL; i++) {
+            for (int j = 0; j < nbImC; j++) {
+                BufferedImage imagette = photo.getSubimage(i*tailleW, j*tailleW, tailleW, tailleW);
+                listImagette.add(imagette);
+            }
+        }
+        return listImagette;
+    }
+
+    public List<int[]> vectorPatchs(List<int[][]> listPatchs) {
+        List<int[]> listPatchVect = new ArrayList<>();
+        for (int[][] patch : listPatchs) {
+            int s = patch.length;
+            int[] patchVect = new int[s*s];
+
+            int k=0; //Indice de parcours de la version vectorisée du patch
+            for (int i=0; i<s; i++){
+                for (int j=0; j<s; j++){
+                    patchVect[k] = patch[i][j];
+                    k++;
+                }
+            }
+        }
+
+        return listPatchVect;
+    }
+
+    
 }
 
