@@ -107,22 +107,33 @@ public class Photo {
     }
 
     /**
-     * Extrait une collection de patchs d'une image bruitée
-     * @param s Entier représentant la taille d'un patch
-     * @return une liste dynamique de patchs
+     * Convertit la valeur d'un pixel en un entier compréhensible entre 0 et 255
+     * @param image L'image manipulée
+     * @param l nombre de lignes de image
+     * @param c nombre de colonnes de image
+     * @return Entier correspondant au channel rouge de l'image
      */
     public static int getPixelValue(BufferedImage image, int l, int c) {
         int rgb = image.getRGB(c, l);
         return (rgb >> 16) & 0xFF; // Extracting red channel value (assuming 8-bit/channel grayscale image)
     }
 
+    /**
+     * Extrait une collection de patchs d'une image bruitée
+     * @param s Entier représentant la taille d'un patch
+     * @return une liste dynamique de patchs
+     */
     public List<int[][]> extractPatchs(BufferedImage photo, int s) {
         int l = photo.getHeight();
         int c = photo.getWidth();
         List<int[][]> listPatches = new ArrayList<>();
         int [][] pospat = new int[l][c];
         for(int i=0; i<l-s;i++){
-            for(int j=0; j<c-s;j++){
+            for(int j=0; j<c-s;j++)/**
+     * Extrait une collection de patchs d'une image bruitée
+     * @param s Entier représentant la taille d'un patch
+     * @return une liste dynamique de patchs
+     */{
                 List<Integer> listL = new ArrayList<>();
                 List<Integer> listC = new ArrayList<>();
                 for(int k=i; k< i+s;k++){
@@ -146,6 +157,12 @@ public class Photo {
         return listPatches;
     }
 
+    /**
+     * Fonction secondaire de extractPatchs() permettant de mettre à jour la position des patchs
+     * @param pospat Matrice contenant la position des patchs
+     * @param listL 
+     * @param listC
+     */
     public static void updatePospat(int[][] pospat, List<Integer> listL, List<Integer> listC) {
         for (int i = 0; i < listL.size(); i++) {
             for (int j = 0; j < listC.size(); j++) {
@@ -154,6 +171,11 @@ public class Photo {
         }
     }
     
+    /**
+     * Convertit une matrice en BufferedImage
+     * @param matrix matrice d'entiers
+     * @return Une BufferedImage
+     */
     public BufferedImage arrayToImage(int[][] matrix) {
         int width = matrix.length;
         int height = matrix[0].length;
@@ -169,6 +191,11 @@ public class Photo {
         return bufferedImage;
     }
 
+    /**
+     * Convertit une BufferedImage en matric
+     * @param bufferedImage une image
+     * @return une matrice d'entiers
+     */
     public int[][] imageToArray(BufferedImage bufferedImage) {
         int width = bufferedImage.getWidth(null);
         int height = bufferedImage.getHeight(null);
@@ -181,6 +208,12 @@ public class Photo {
         return pixels;
     }
 
+    /**
+     * Reconstruit une image à partir d'une collection de patchs
+     * @param listPatchs Liste des patchs extraits
+     * @param posPatchs Matrice contenant le nombre de patchs dans lequel le pixel à la coordonnée associée apparait
+     * @return L'image recréée
+     */
     public BufferedImage reconstructPatch(List<int[][]> listPatchs, int[][] posPatchs) {
         int s = listPatchs.get(0).length; //Taille d'un patch
         int L = posPatchs.length;
@@ -206,6 +239,12 @@ public class Photo {
         return image;
     }
 
+    /**
+     * Découpe l'image en une collection d'images de taille W
+     * @param photo L'image initiale
+     * @param tailleW La taille des imagettes extraites
+     * @return Une collection de petites images
+     */
     public ArrayList<BufferedImage> decoupeImage(BufferedImage photo, int tailleW){
         ArrayList<BufferedImage> listImagette = new ArrayList<>();
         int L = photo.getHeight();
@@ -238,7 +277,4 @@ public class Photo {
 
         return listPatchVect;
     }
-
-    
 }
-

@@ -9,20 +9,20 @@ import java.awt.FlowLayout;
 import javax.swing.ImageIcon;
 
 public class Main {
-	BufferedImage image = new BufferedImage(null, null, false, null);
 
 	// ImageIO.read(PerformanceTest.class.getResource("donnees/lena.jpg"));
 	public static void main(String[] args) throws IOException {
 		Photo lena = new Photo();
 
 		lena.noising(lena.getPhoto(), 20);
+
+        //Affichage d'une image
         JFrame frame = new JFrame();
         frame.getContentPane().setLayout(new FlowLayout());
         frame.getContentPane().add(new JLabel(new ImageIcon(lena.getPhotoBruitee())));
         frame.pack();
         frame.setVisible(true);
 
-        System.out.println("Execution de l'extraction des patchs");
-        System.out.println(lena.extractPatchs(lena.getPhotoBruitee(), 15));
+        
     }
 }
