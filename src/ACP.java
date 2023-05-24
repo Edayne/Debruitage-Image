@@ -188,6 +188,18 @@ public class ACP {
 
     }
 
+    public Matrix vecteurnormalise (Matrix vectPropre){
+        int nbL = vectPropre.getRowDimension(); //Récupère nombre ligne
+        int nbC = vectPropre.getColumnDimension(); //Récupère nombre colonne
+        for (int i=0; i<nbC; i++){ // Pour chaque vecteur propre
+            Matrix vecteurn = vectPropre.getMatrix(0,nbL-1,i,i); //Extrait les vecteurs propres de la matrice
+            double norm = vecteurn.normF(); //Calcule la norme de chaque vecteur
+            vecteurn =vecteurn.times(1.0/norm); //Normalise le vecteur(Produit matrice * scalaire)
+            vectPropre.setMatrix(0,nbL,i,i,vecteurn); //Remplace dans la matrice d'origine les vecteurs propres par les vecteurs propres normalisés
+        }
+        return vectPropre;
+    }
+
     public double[][] Proj(double[][] U, double[][] V_centree ){
         double[][] projection = new double[V_centree.length][U[0].length];
         int k;
