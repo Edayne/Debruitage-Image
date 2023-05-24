@@ -1,7 +1,7 @@
-import javafx.stage.Stage;
 import javafx.geometry.Insets;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
@@ -31,11 +31,12 @@ import javafx.scene.control.ListView;
 public class Accueil extends Application {
 
 	
-    @Override
+    ;//private String cheminImage;
+    String cheminImage;
+
+	@Override
     public void start(Stage primaryStage) throws Exception {
     	
-    	
-        
 //----------------------------------------------------------------------------------------------------        
         //creation box pour les images
         HBox boxImage=new HBox();
@@ -47,9 +48,9 @@ public class Accueil extends Application {
         ImageView imageView3 = new ImageView();
         
         // Chargement de l'image à partir d'un fichier
-        BufferedImage image_1= ImageIO.read(new File("donnees/lena.png"));
-        BufferedImage image_2= ImageIO.read(new File("donnees/lena.png"));
-        BufferedImage image_3= ImageIO.read(new File("donnees/lena.png"));
+        BufferedImage image_1= ImageIO.read(new File("donnees/default.jpg"));
+        BufferedImage image_2= ImageIO.read(new File("donnees/default.jpg"));
+        BufferedImage image_3= ImageIO.read(new File("donnees/default.jpg"));
         
         //conversion buffered image en image javafx
         WritableImage image1 = SwingFXUtils.toFXImage(image_1, null);
@@ -89,6 +90,36 @@ public class Accueil extends Application {
         GridPane.setMargin(l1, margin);
 
         boxFunction.getChildren().add(grid1);
+
+        btn_image.setOnAction(event->{
+        	if(t1.getText().isEmpty()) {
+        		Alert alerte = new Alert(AlertType.INFORMATION);
+              	alerte.setTitle("Erreur");
+              	alerte.setHeaderText(null);
+              	alerte.setContentText("Veuiller remplir tous les champs.");
+              	alerte.showAndWait();
+        	}else {
+                 String chemin =t1.getText();
+                 cheminImage=chemin;
+                try {
+                	BufferedImage imaged=ImageIO.read(new File(chemin));
+                    //conversion buffered image en image javafx
+                    WritableImage imageOrigin = SwingFXUtils.toFXImage(imaged, null);  
+            		// Attribution de l'image à l'ImageView
+                    imageView1.setImage(imageOrigin);
+
+                }catch(IOException e) {
+                	Alert alerte = new Alert(AlertType.INFORMATION);
+                  	alerte.setTitle("Erreur");
+                  	alerte.setHeaderText(null);
+                  	alerte.setContentText("Image introuvable.");
+                  	alerte.showAndWait();
+                }
+
+        		
+        	}
+        	
+        });
         
         
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -119,17 +150,20 @@ public class Accueil extends Application {
                 String sig=t2.getText();
                 try {
                 	float sigma=Float.parseFloat(sig);
-                	Photo image = new Photo();
-                    image.noising(image.getPhoto(), sigma);
-                    
-                    
-                    //conversion buffered image en image javafx
-                    
-                    WritableImage imageBruitee = SwingFXUtils.toFXImage(image.getPhotoBruitee(), null);                    
-            		// Attribution de l'image à l'ImageView
-                    
-                    imageView2.setImage(imageBruitee);
-                	
+                	try {
+                		Photo image = new Photo(cheminImage);
+                        image.noising(image.getPhoto(), sigma);                                            
+                        //conversion buffered image en image javafx                        
+                        WritableImage imageBruitee = SwingFXUtils.toFXImage(image.getPhotoBruitee(), null);                    
+                		// Attribution de l'image à l'ImageView                       
+                        imageView2.setImage(imageBruitee);
+                	}catch(Exception e) {
+                		Alert alerte = new Alert(AlertType.INFORMATION);
+                      	alerte.setTitle("Erreur");
+                      	alerte.setHeaderText(null);
+                      	alerte.setContentText("Veuillez choixir une image a bruitée.");
+                      	alerte.showAndWait();
+                	}                              	
                 }catch(NumberFormatException e) {
                 	Alert alerte = new Alert(AlertType.INFORMATION);
                 	alerte.setTitle("Erreur");
@@ -175,7 +209,7 @@ public class Accueil extends Application {
         // Création de la scène
         Scene scene = new Scene(layout,1610,700);        
         // Configuration de la fenêtre principale
-        primaryStage.setTitle("Application de bienvenue");      
+        primaryStage.setTitle("Débruitage d'image");      
         primaryStage.setScene(scene);
         primaryStage.show();
     }
