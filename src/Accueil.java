@@ -43,6 +43,7 @@ public class Accueil extends Application {
         // Création des ImageView
         ImageView imageView1 = new ImageView();
         ImageView imageView2 = new ImageView();
+        
         ImageView imageView3 = new ImageView();
         
         // Chargement de l'image à partir d'un fichier
