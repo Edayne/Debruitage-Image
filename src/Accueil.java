@@ -120,8 +120,10 @@ public class Accueil extends Application {
                 	Photo image = new Photo();
                     image.noising(image.getPhoto(), sigma);
                     //conversion buffered image en image javafx
+                    
                     WritableImage imageBruitee = SwingFXUtils.toFXImage(image.getPhotoBruitee(), null);                    
             		// Attribution de l'image à l'ImageView
+                    
                     imageView2.setImage(imageBruitee);
                 	
                 }catch(NumberFormatException e) {

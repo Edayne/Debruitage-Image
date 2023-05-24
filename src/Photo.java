@@ -21,7 +21,7 @@ public class Photo {
     public Photo() {
         this.photo = null;
         try {
-            this.photo = ImageIO.read(new File("../donnees/lena.png")); //ptet mettre ça dans le Main, à voir
+            this.photo = ImageIO.read(new File("donnees/lena.png")); //ptet mettre ça dans le Main, à voir
         } catch (IOException e) {
             System.out.println("Fichier introuvable, réessayez !");
         }
