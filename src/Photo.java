@@ -277,4 +277,8 @@ public class Photo {
 
         return listPatchVect;
     }
+    
+    public void ImageDen(String typeseuil, String seuillage) {
+    	
+    }
 }
