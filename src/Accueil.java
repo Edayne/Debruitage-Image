@@ -30,6 +30,7 @@ import javafx.scene.control.ListView;
 
 public class Accueil extends Application {
 
+	
     @Override
     public void start(Stage primaryStage) throws Exception {
     	
@@ -170,9 +171,9 @@ public class Accueil extends Application {
         VBox layout = new VBox();
         layout.getChildren().addAll(boxImage,boxFunction);        
         // Création de la scène
-        Scene scene = new Scene(layout,1610,700);
+        Scene scene = new Scene(layout,1610,700);        
         // Configuration de la fenêtre principale
-        primaryStage.setTitle("Application de bienvenue");
+        primaryStage.setTitle("Application de bienvenue");      
         primaryStage.setScene(scene);
         primaryStage.show();
     }

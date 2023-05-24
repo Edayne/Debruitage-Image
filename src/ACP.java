@@ -14,6 +14,7 @@ public class ACP {
      */
     public double VisuShrink(int l, double s){
         return(s*Math.sqrt(2*Math.log(l)));
+    
     }
 
     /**
