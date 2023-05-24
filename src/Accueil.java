@@ -1,4 +1,4 @@
-
+import javafx.stage.Stage;
 import javafx.geometry.Insets;
 import java.awt.image.BufferedImage;
 import java.io.File;
