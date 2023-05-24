@@ -160,6 +160,7 @@ public class Accueil extends Application {
         grid3.add(btn_seuil, 1, 3);
         
         GridPane.setMargin(l3, margin);
+        
         GridPane.setMargin(l4, margin);
        
         
