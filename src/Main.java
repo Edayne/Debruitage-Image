@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.List;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.io.IOException;
@@ -14,6 +15,7 @@ public class Main {
 	public static void main(String[] args) throws IOException {
 		Photo lena = new Photo("donnees/lena.png");
 
+        //Bruitage de l'image
 		lena.noising(lena.getPhoto(), 20);
 
         //Affichage d'une image
@@ -22,6 +24,10 @@ public class Main {
         frame.getContentPane().add(new JLabel(new ImageIcon(lena.getPhotoBruitee())));
         frame.pack();
         frame.setVisible(true);
+
+        //Extraction des patchs et vectorisation
+        List<int[][]> listPatches = lena.extractPatchs(lena.getPhotoBruitee(), 20);
+        List<int[]> listVectPatch = lena.vectorPatchs(listPatches);
 
         
     }

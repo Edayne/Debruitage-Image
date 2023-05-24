@@ -112,7 +112,7 @@ public class Photo {
      * @param c nombre de colonnes de image
      * @return Entier correspondant au channel rouge de l'image
      */
-    public static int getPixelValue(BufferedImage image, int l, int c) {
+    public int getPixelValue(BufferedImage image, int l, int c) {
         int rgb = image.getRGB(c, l);
         return (rgb >> 16) & 0xFF; // Extracting red channel value (assuming 8-bit/channel grayscale image)
     }
@@ -128,11 +128,7 @@ public class Photo {
         List<int[][]> listPatches = new ArrayList<>();
         int [][] pospat = new int[l][c];
         for(int i=0; i<l-s;i++){
-            for(int j=0; j<c-s;j++)/**
-     * Extrait une collection de patchs d'une image bruitée
-     * @param s Entier représentant la taille d'un patch
-     * @return une liste dynamique de patchs
-     */{
+            for(int j=0; j<c-s;j++){
                 List<Integer> listL = new ArrayList<>();
                 List<Integer> listC = new ArrayList<>();
                 for(int k=i; k< i+s;k++){
@@ -259,6 +255,11 @@ public class Photo {
         return listImagette;
     }
 
+    /**
+     * Transforme une liste de int[][] en une liste de int[], soit une vectorisation de matrice
+     * @param listPatchs
+     * @return
+     */
     public List<int[]> vectorPatchs(List<int[][]> listPatchs) {
         List<int[]> listPatchVect = new ArrayList<>();
         for (int[][] patch : listPatchs) {
@@ -275,9 +276,5 @@ public class Photo {
         }
 
         return listPatchVect;
-    }
-
-    public BufferedImage imageDebruit(){
-
     }
 }

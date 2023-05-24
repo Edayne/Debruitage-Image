@@ -7,7 +7,6 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-import com.sun.prism.Image;
 
 import javafx.application.Application;
 import javafx.collections.FXCollections;
@@ -217,6 +216,6 @@ public class Accueil extends Application {
     }
 
     public static void main(String[] args) {
-        launch(args);
+        Application.launch(args);
     }
 }
