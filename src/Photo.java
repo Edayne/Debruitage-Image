@@ -83,17 +83,19 @@ public class Photo {
     }
 
     /**
+     * Permet de bruitée une image
+     * @param valeur de la variance du bruit gaussien
      * @return BufferedImage return la photo bruitée
      */
-    public void noising(BufferedImage photo, double sigma) {
-        nbL = photo.getHeight();
-        nbC = photo.getWidth();
+    public void noising(double sigma) {
+        nbL = this.photo.getHeight();
+        nbC = this.photo.getWidth();
         this.photoBruitee = new BufferedImage(nbC, nbL, BufferedImage.TYPE_INT_RGB);
         for(int i=0; i<nbL;i++){
             for(int j=0; j<nbC;j++){
                 Random random = new Random();
                 int newPixel ;
-                newPixel = (photo.getRGB(i,j)& 0xff) +(int) (random.nextGaussian()*sigma);
+                newPixel = (this.photo.getRGB(i,j)& 0xff) +(int) (random.nextGaussian()*sigma);
                 if(newPixel < 0){
                     newPixel=0;
                 }else if(newPixel>255){
@@ -122,9 +124,9 @@ public class Photo {
      * @param s Entier représentant la taille d'un patch
      * @return une liste dynamique de patchs
      */
-    public List<int[][]> extractPatchs(BufferedImage photo, int s) {
-        int l = photo.getHeight();
-        int c = photo.getWidth();
+    public List<int[][]> extractPatchs( int s) {
+        int l = this.photoBruitee.getHeight();
+        int c = this.photoBruitee.getWidth();
         List<int[][]> listPatches = new ArrayList<>();
         int [][] pospat = new int[l][c];
         for(int i=0; i<l-s;i++){
@@ -141,7 +143,7 @@ public class Photo {
                 int [][] patch = new int[s][s];
                 for(int k=0; k< s; k++){
                     for(int m=0; m< s; m++){
-                        patch[k][m] = getPixelValue(photo, listL.get(k)-1, listC.get(m)-1);
+                        patch[k][m] = getPixelValue(this.photoBruitee, listL.get(k)-1, listC.get(m)-1);
                     }
                 }
 
@@ -240,10 +242,10 @@ public class Photo {
      * @param tailleW La taille des imagettes extraites
      * @return Une collection de petites images
      */
-    public ArrayList<BufferedImage> decoupeImage(BufferedImage photo, int tailleW){
+    public ArrayList<BufferedImage> decoupeImage(int tailleW){
         ArrayList<BufferedImage> listImagette = new ArrayList<>();
-        int L = photo.getHeight();
-        int C = photo.getWidth();
+        int L = this.photo.getHeight();
+        int C = this.photo.getWidth();
         int nbImL = L/tailleW; 
         int nbImC = C/tailleW;
         for (int i = 0; i < nbImL; i++) {
@@ -278,7 +280,30 @@ public class Photo {
         return listPatchVect;
     }
     
-    public void ImageDen(String typeseuil, String seuillage) {
+    public void ImageDen(String chemin, double sigma,String choixPatch, int taillePatch,int tailleImagette, String typeseuil, String seuillage) {
+    	ACP function=new ACP();
+    	Photo photo=new Photo(chemin);
+    	//brutage de la photo
+    	photo.noising(sigma);
+    	//extraction des patch de taille s
+    	//vectorisation des patch
+    	List<int[][]> vectorPatch=photo.extractPatchs(taillePatch);
+    	//
+    	if(choixPatch.equalsIgnoreCase("local") || choixPatch.equalsIgnoreCase("global") ) {
+    		System.out.print("Choix de la fonction pour l'extraction d epatch inconnu !");
+    	}else {
+    		if(choixPatch.equalsIgnoreCase("GLOBAL")) {
+    	    	List<int[][]> patch=photo.extractPatchs(taillePatch);
+    		}else {
+    			ArrayList<BufferedImage> listImagette =photo.decoupeImage(tailleImagette);
+    			for(BufferedImage image: listImagette) {
+        	    	List<int[][]> patch=photo.extractPatchs(taillePatch);
+    			}
+
+    		}
+    	}
+
+    	
     	
     }
 }
