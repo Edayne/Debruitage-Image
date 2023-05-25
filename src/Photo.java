@@ -285,15 +285,26 @@ public class Photo {
     	Photo photo=new Photo(chemin);
     	//brutage de la photo
     	photo.noising(sigma);
-    	//extraction des patch de taille s
-    	//vectorisation des patch
-    	List<int[][]> vectorPatch=photo.extractPatchs(taillePatch);
-    	//
+    	//extraction des patch de taille s en fonction du choix de la fonctin de patch local ou global
     	if(choixPatch.equalsIgnoreCase("local") || choixPatch.equalsIgnoreCase("global") ) {
-    		System.out.print("Choix de la fonction pour l'extraction d epatch inconnu !");
+    		System.out.print("Choix de la fonction pour l'extraction de patch inconnu !");
     	}else {
     		if(choixPatch.equalsIgnoreCase("GLOBAL")) {
-    	    	List<int[][]> patch=photo.extractPatchs(taillePatch);
+    			//extraction de patch sur l'image global
+    	    	List<int[][]> listPatchs=photo.extractPatchs(taillePatch);
+    	    	//vectorisation des patch
+    	    	List<int[]> vectorPatchD=photo.vectorPatchs(listPatchs);
+    	    	//converstion des list de patch en double[][]
+    	    	double [][] vectorPatch;
+    	    	vectorPatch=function.convertListIntabDouble(vectorPatchD);
+    	    	//centrage des patch vectorisé
+    	    	double[][] vecteurCentre=function.calculerVecteursCentres(vectorPatch);
+    	    	//ACp sur les vecteurs centrée
+    	    	double[][] baseAcp=function.acp(vecteurCentre);
+    	    	//projection des vecteurs
+    	    	double[][] vectProj=function.Proj(baseAcp, vecteurCentre);
+    	    	
+    	    	
     		}else {
     			ArrayList<BufferedImage> listImagette =photo.decoupeImage(tailleImagette);
     			for(BufferedImage image: listImagette) {

@@ -1,5 +1,5 @@
 import java.util.ArrayList;
-import java.awt.List;
+import java.util.List;
 import java.awt.image.BufferedImage;
 import Jama.Matrix;
 import Jama.EigenvalueDecomposition;
@@ -175,6 +175,22 @@ public class ACP {
             }
         }
         return Vc;
+    }
+    
+    public double[][] convertListIntabDouble(List<int[]> V) {
+        int nb_vecteurs = V.size();
+        int dimV = V.get(0).length;
+        
+        double[][] tab = new double[nb_vecteurs][dimV];
+        int j=0;
+        for(int[] element: V) {
+        	for(int i=0; i<element.length; i++) {
+        		tab[j][i]=element[i];       		
+        	}
+        	j++;
+        }
+
+    	return tab;
     }
 
 
