@@ -1,5 +1,5 @@
 import java.util.ArrayList;
-import java.awt.List;
+import java.util.List;
 import java.awt.image.BufferedImage;
 import Jama.Matrix;
 import Jama.EigenvalueDecomposition;
@@ -8,12 +8,12 @@ import Jama.EigenvalueDecomposition;
 public class ACP {
     /**
      * 
-     * @param l nb pixels de l'image
+     * @param nbPix nb pixels de l'image
      * @param s ecart-type du bruit
      * @return renvoit le seuil calculé par la méthode VisuShrink
      */
-    public double VisuShrink(int l, double s){
-        return(s*Math.sqrt(2*Math.log(l)));
+    public double VisuShrink(int nbPix, double s){
+        return(s*Math.sqrt(2*Math.log(nbPix)));
     
     }
 
@@ -50,9 +50,9 @@ public class ACP {
     
     /**
      * 
-     * @param seuil 
-     * @param coefficients
-     * @return
+     * @param seuil Seuil calculés par les méthodes VisuShrink et BayesShrink
+     * @param coefficients Projection des patchs vectorisés dans la base de l'ACP
+     * @return La matrice de projection dont les coeffcients inférieurs sont supprimés
      */
     public double[][] seuillageDur(double seuil, double[][] coefficients){
         int n = coefficients.length;
@@ -71,6 +71,12 @@ public class ACP {
         return resultat;
     }
 
+    /**
+     * 
+     * @param seuil Seuil calculés par les méthodes VisuShrink et BayesShrink
+     * @param coefficients Projection des patchs vectorisés dans la base de l'ACP
+     * @return Matrice de projection altérée
+     */
     public double[][] seuillageDoux(double seuil, double[][] coefficients){
         int n = coefficients.length;
         int m = coefficients[0].length;
@@ -92,7 +98,8 @@ public class ACP {
         }
         return resultat;
     }
-    public static double calculateMSE(BufferedImage X, BufferedImage Y) {
+    
+    public double calculateMSE(BufferedImage X, BufferedImage Y) {
         int l = X.getHeight();
         int c = X.getWidth();
 
@@ -114,7 +121,7 @@ public class ACP {
         return MSE;
     }
 
-    public static double calculatePSNR(BufferedImage X, BufferedImage Y){
+    public double calculatePSNR(BufferedImage X, BufferedImage Y){
         double MSE = calculateMSE(X, Y);
         double PSNR = 10*Math.log10(255/MSE);
         return PSNR;
@@ -125,36 +132,37 @@ public class ACP {
      * @param V Tableau de patchs vectorisées
      * @return Renvoit le vecteur moyen des patchs
      */
-    public double[] calculVecteurMoyen(double[][] V){
-        int nb_vecteurs = V.length; // Nb_échantillon prend le nombre de ligne de V
-        int dimV = V[0].length; // Nb éléments dans chaque vecteur ici je considère qu'ils font tous la même taille
+    public double[] calculVecteurMoyen(List<int[]> V){
+        int nb_vecteurs = V.size(); 
+        int dimV = V.get(0).length; // Nb éléments dans chaque vecteur ici je considère qu'ils font tous la même taille
         double[] mV = new double[dimV]; //mV va stocker le vecteur moyen 
         for (int j=0; j<dimV; j++){
             double somme = 0.0; 
             for (int i=0; i<nb_vecteurs; i++){ 
-                somme += V[i][j]; 
+                somme += V.get(i)[j]; //j-eme coordonnée du i-eme vecteur
             }
             mV[j] = somme/nb_vecteurs; // Le vecteur moyen est égale à la somme des vecteurs divisé par le nombre de vecteurs
         }
         return mV;   
     }
+
     /**
      * 
      * @param V Tableau de patchs vectorisés
      * @return Renvoit la matrice de covariance de ces vecteurs
      */
-    public double[][] calculMatriceCovariance(double[][] V){
-        int nb_vecteurs = V.length; // Nb_échantillon prend le nombre de ligne de V
-        int dimV = V[0].length; // Nb éléments dans chaque vecteur ici je considère qu'ils font tous la même taille
+    public double[][] calculMatriceCovariance(List<int[]> V){
+        int nb_vecteurs = V.size(); // Nb_échantillon prend le nombre de ligne de V
+        int dimV = V.get(0).length; // Nb éléments dans chaque vecteur
 
         double[] mV = calculVecteurMoyen(V); 
 
         double[][] Gamma = new double[dimV][dimV]; //Stocker la matrice de Covariance
         for (int j=0; j<dimV; j++){ //Pour les lignes
             for (int k=0; k<dimV; k++){ //Pour les colonnes
-            double somme = 0.0; //j'initialise somme à 0
-                for (int i=0; i<nb_vecteurs; i++){ //Pour chaque échantillon
-                    somme += (V[i][j] - mV[j])*(V[i][k] - mV[k]); //Cela calcule la covariance entre Vj et Vk
+            double somme = 0.0; 
+                for (int[] vecteur : V){
+                    somme += (vecteur[j] - mV[j])*(vecteur[k] - mV[k]); //Cela calcule la covariance entre Vj et Vk
                 }
                 Gamma[j][k] = somme/(nb_vecteurs);
             }
@@ -162,21 +170,24 @@ public class ACP {
         return Gamma;
     }
 
-    public double[][] calculerVecteursCentres(double[][] V) {
-        int nb_vecteurs = V.length;
-        int dimV = V[0].length;
-
+    /**
+     * Renvoie les patchs vectorisés centrés
+     * @param V Liste des vecteurs des patchs
+     * @return List des vecteurs des patchs centrés
+     */
+    public List<double[]> calculerVecteursCentres(List<int[]> V) {
+        int dimV = V.get(0).length;
         double[] mV = calculVecteurMoyen(V);
 
-        double[][] Vc = new double[nb_vecteurs][dimV];
-        for (int i = 0; i < nb_vecteurs; i++) {
+        List<double[]> Vc = new ArrayList<>();
+        for (int[] vecteur : V) {
             for (int j = 0; j < dimV; j++) {
-                Vc[i][j] = V[i][j] - mV[j];
+                double[] vectCent = new double[dimV];
+                vectCent[j] = vecteur[j] - mV[j];
             }
         }
         return Vc;
     }
-
 
     public Matrix vecteurnormalise (Matrix vectPropre){
         int nbL = vectPropre.getRowDimension(); //Récupère nombre ligne
@@ -190,23 +201,26 @@ public class ACP {
         return vectPropre;
     }
 
-    public double[][] acp (double[][] V){
+    public double[][] acp (List<int[]> V){
         double [][] covariance = calculMatriceCovariance(V);
         //On récupère les valeurs propres de Cov
         Matrix covMatrix = new Matrix(covariance);
         EigenvalueDecomposition EvD = new EigenvalueDecomposition(covMatrix);
         
         Matrix vectPropre = EvD.getV(); //Matrice des vecteurs propres 
-        double[][] vect =  vecteurnormalise(vectPropre).getArray();
-        return vect;
+        double[][] base =  vecteurnormalise(vectPropre).getArray();
+        return base;
     }
 
-
-
-    public double[][] Proj(double[][] U, double[][] V_centree ){
-        double[][] projection = new double[V_centree.length][U[0].length];
-        int k;
-        k=0;
+    /**
+     * Renvoit la projection des patchs vectorisés dans la base donnée par l'ACP
+     * @param U Base orthonormale donnée par acp()
+     * @param V_centree Les patchs vectorisés centrés
+     * @return La projection de V_centree dans U
+     */
+    public double[][] proj(double[][] U, List<double[]> V_centree ){
+        double[][] projection = new double[V_centree.size()][U[0].length];
+        int k = 0;
         double coef;
         for (double[] vecteur : V_centree) {
             for (int i=0; i<U[0].length;i++) {

@@ -20,7 +20,9 @@ public class Photo {
     //Constructeurs
     public Photo(String chemin) {
         try {
-            this.photo = ImageIO.read(new File(chemin)); //ptet mettre ça dans le Main, à voir
+            this.photo = ImageIO.read(new File(chemin)); 
+            this.nbC = this.photo.getWidth();
+            this.nbL = this.photo.getHeight();
         } catch (IOException e) {
             System.out.println("Fichier introuvable, réessayez !");
         }
@@ -278,7 +280,50 @@ public class Photo {
         return listPatchVect;
     }
     
-    public void ImageDen(String typeseuil, String seuillage) {
-    	
+    /**
+     * 
+     * @param coefPostSeuil Matrice des coefficients de la projection des patchs vectorisés dans la base de l'ACP après le seuillage
+     * @param mV Vecteur moyen des patchs
+     * @param base Matrice de la base orthnormale donnée par l'ACP
+     * @return Liste des nouveaux patchs
+     */
+    public List<double[]> ImageDebr(double[][] coefPostSeuil, double[] mV, double[][] base) {
+    	List<double[]> nvPatchList = new ArrayList<>();
+        int L = coefPostSeuil.length;
+        int C = coefPostSeuil[0].length;
+
+        for (int i = 0; i < L; i++) {
+            double[] nvVecteur = new double[mV.length]; //correspond au Z_i de l'énoncé
+            for (int j = 0; j < C; j++) {
+                nvVecteur[j] = mV[j] + coefPostSeuil[i][j]*base[i][j];
+            }
+            nvPatchList.add(nvVecteur);
+        }
+
+        return nvPatchList;
+    }
+
+    /**
+     * Convertit une liste de vecteurs de réels en une image visible
+     * @param listeVect Liste de vecteurs réels
+     * @return Image sous le format BufferedImage
+     */
+    public BufferedImage toBufferedImage(List<double[]> listeVect) {
+        BufferedImage image = new BufferedImage(nbL, nbC, 3);
+
+        for(int i=0; i<nbL; i++) {
+            double[] vecteur = listeVect.get(i);
+            for(int j = 0; j < nbC; j++) {
+                int rgb = (int)vecteur[j]<<16 | (int)vecteur[j] << 8 | (int)vecteur[j];
+                image.setRGB(i, j, rgb);
+            }
+        }
+        try {
+            ImageIO.write(image, "Doublearray", new File("../donned/Doublearray.jpg"));
+            System.out.println("end");
+        } catch (Exception e) {
+            System.err.println("IMPOSSIBLE D'ECRIRE ICI");
+        }
+        return image;
     }
 }
