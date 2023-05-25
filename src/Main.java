@@ -16,7 +16,7 @@ public class Main {
 		Photo lena = new Photo("donnees/lena.png");
 
         //Bruitage de l'image
-		lena.noising(lena.getPhoto(), 20);
+		lena.noising( 20);
 
         //Affichage d'une image
         JFrame frame = new JFrame();
@@ -26,7 +26,7 @@ public class Main {
         frame.setVisible(true);
 
         //Extraction des patchs et vectorisation
-        List<int[][]> listPatches = lena.extractPatchs(lena.getPhotoBruitee(), 20);
+        List<int[][]> listPatches = lena.extractPatchs( 20);
         List<int[]> listVectPatch = lena.vectorPatchs(listPatches);
 
         
