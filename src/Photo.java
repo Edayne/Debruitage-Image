@@ -16,11 +16,15 @@ public class Photo {
     private BufferedImage photoBruitee;
     private int nbL;
     private int nbC;
+    private int nbPixel;
 
     //Constructeurs
     public Photo(String chemin) {
         try {
             this.photo = ImageIO.read(new File(chemin)); //ptet mettre ça dans le Main, à voir
+            this.nbL = this.photo.getHeight();
+            this.nbC = this.photo.getWidth();
+            this.nbPixel=this.photo.getHeight()*this.photo.getWidth();
         } catch (IOException e) {
             System.out.println("Fichier introuvable, réessayez !");
         }
@@ -61,12 +65,7 @@ public class Photo {
         return nbL;
     }
 
-    /**
-     * @param nbL the nbL to set
-     */
-    public void setNbL(int nbL) {
-        this.nbL = nbL;
-    }
+
 
     /**
      * @return int return the nbC
@@ -75,12 +74,7 @@ public class Photo {
         return nbC;
     }
 
-    /**
-     * @param nbC the nbC to set
-     */
-    public void setNbC(int nbC) {
-        this.nbC = nbC;
-    }
+
 
     /**
      * Permet de bruitée une image
@@ -280,13 +274,13 @@ public class Photo {
         return listPatchVect;
     }
     
-    public void ImageDen(String chemin, double sigma,String choixPatch, int taillePatch,int tailleImagette, String typeseuil, String seuillage) {
+    public void ImageDen(String chemin, double sigma,String choixPatch, int taillePatch,int tailleImagette, String typeSeuil, String seuillage) {
     	ACP function=new ACP();
     	Photo photo=new Photo(chemin);
     	//brutage de la photo
     	photo.noising(sigma);
     	//extraction des patch de taille s en fonction du choix de la fonctin de patch local ou global
-    	if(choixPatch.equalsIgnoreCase("local") || choixPatch.equalsIgnoreCase("global") ) {
+    	if(!(choixPatch.equalsIgnoreCase("local") || choixPatch.equalsIgnoreCase("global") )) {
     		System.out.print("Choix de la fonction pour l'extraction de patch inconnu !");
     	}else {
     		if(choixPatch.equalsIgnoreCase("GLOBAL")) {
@@ -303,7 +297,43 @@ public class Photo {
     	    	double[][] baseAcp=function.acp(vecteurCentre);
     	    	//projection des vecteurs
     	    	double[][] vectProj=function.Proj(baseAcp, vecteurCentre);
+    	    	//disjonction des cas en fonction du choix du seuillage
+    	    	if(seuillage.equalsIgnoreCase("dur") || seuillage.equalsIgnoreCase("doux")) {
+    	    		if(seuillage.equalsIgnoreCase("dur")) {
+    	    			//disjonction des cas en fonctions du choix du type de seuil
+    	    			if(typeSeuil.equalsIgnoreCase("seuilV") || typeSeuil.equalsIgnoreCase("seuilB") ) {
+    	    				if(typeSeuil.equalsIgnoreCase("seuilV")) {
+    	    					double seuil= function.VisuShrink(photo.nbPixel, sigma);
+    	    					double[][] 	vectSeuill=function.seuillageDur(seuil, vectProj);
+    	    				}else {
+    	    					double seuil= function.BayesShrink(taillePatch, photo.getPhoto());
+    	    					double[][] 	vectSeuill=function.seuillageDur(seuil, vectProj);
+    	    				}
+    	    			}else {
+    	    	    		System.out.print("Choix du type de seuil inconnu seuil inconnu");
+    	    			}
+    	    		}else {
+    	    			//disjonction des cas en fonctions du choix du type de seuil
+    	    			if(typeSeuil.equalsIgnoreCase("seuilV") || typeSeuil.equalsIgnoreCase("seuilB") ) {
+    	    				if(typeSeuil.equalsIgnoreCase("seuilV")) {
+    	    					double seuil= function.VisuShrink(photo.nbPixel, sigma);
+    	    					double[][] 	vectSeuill=function.seuillageDoux(seuil, vectProj);
+    	    				}else {
+    	    					double seuil= function.BayesShrink(taillePatch, photo.getPhoto());
+    	    					double[][] 	vectSeuill=function.seuillageDoux(seuil, vectProj);
+    	    				}
+    	    			}else {
+    	    	    		System.out.print("Choix du type de seuil inconnu seuil inconnu");
+    	    			}
+    	    			
+    	    		}
+    	    	}else {
+    	    		System.out.print("Choix de la fonction seuil inconnu");
+
+    	    	}
+    	    	//apres avoir patche et seuille on passe a la reconstruction de l'image
     	    	
+    	    		
     	    	
     		}else {
     			ArrayList<BufferedImage> listImagette =photo.decoupeImage(tailleImagette);
