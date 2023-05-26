@@ -335,7 +335,9 @@ public class Photo {
     	    	//il faut d'abord dévectoctererse les patch 
     	    	//puis reconstruire les patch , par contre la fonctiojn reconstructPatch necessite 
     	    	//la position et celle ci n'est donnée à aucune fonction
-    	    	
+    	    	//et il faudrait penser a changer tous les "int" en "double" parce que c'est assez restrictif 
+    	    	//de considerer que des int en sachant que des doubles sont aussi des int
+    	    	//ça évitera des conflits et des probnlèmes de conversion    	    	
     	    		
     	    
     	    	
