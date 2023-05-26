@@ -187,6 +187,22 @@ public class ACP {
         }
         return Vc;
     }
+    
+    public double[][] convertListIntabDouble(List<int[]> V) {
+        int nb_vecteurs = V.size();
+        int dimV = V.get(0).length;
+        
+        double[][] tab = new double[nb_vecteurs][dimV];
+        int j=0;
+        for(int[] element: V) {
+        	for(int i=0; i<element.length; i++) {
+        		tab[j][i]=element[i];       		
+        	}
+        	j++;
+        }
+
+    	return tab;
+    }
 
     public Matrix vecteurnormalise (Matrix vectPropre){
         int nbL = vectPropre.getRowDimension(); //Récupère nombre ligne
@@ -234,4 +250,7 @@ public class ACP {
         }
         return projection;
     }
+    
+    
+    
 }//fin

@@ -153,7 +153,7 @@ public class Accueil extends Application {
                 	float sigma=Float.parseFloat(sig);
                 	try {
                 		Photo image = new Photo(cheminImage);
-                        image.noising(image.getPhoto(), sigma);                                            
+                        image.noising(sigma);                                            
                         //conversion buffered image en image javafx                        
                         WritableImage imageBruitee = SwingFXUtils.toFXImage(image.getPhotoBruitee(), null);                    
                 		// Attribution de l'image à l'ImageView                       
