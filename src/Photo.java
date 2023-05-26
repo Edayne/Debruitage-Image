@@ -85,6 +85,8 @@ public class Photo {
     }
 
     /**
+     * @param photo une image sous format BufferedImage
+     * @param sigma la variance souhaitée pour la variable gaussienne
      * @return BufferedImage return la photo bruitée
      */
     public void noising(BufferedImage photo, double sigma) {
