@@ -332,10 +332,16 @@ public class Photo {
 
     	    	}
     	    	//apres avoir patche et seuille on passe a la reconstruction de l'image
+    	    	//il faut d'abord dévectoctererse les patch 
+    	    	//puis reconstruire les patch , par contre la fonctiojn reconstructPatch necessite 
+    	    	//la position et celle ci n'est donnée à aucune fonction
     	    	
     	    		
+    	    
     	    	
-    		}else {
+    		}
+    		//en effet il faut distinguer une acp local et une acp global
+    		else {
     			ArrayList<BufferedImage> listImagette =photo.decoupeImage(tailleImagette);
     			for(BufferedImage image: listImagette) {
         	    	List<int[][]> patch=photo.extractPatchs(taillePatch);
