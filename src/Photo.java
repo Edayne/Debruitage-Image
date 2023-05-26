@@ -274,7 +274,19 @@ public class Photo {
         return listPatchVect;
     }
     
-    public void ImageDen(String chemin, double sigma,String choixPatch, int taillePatch,int tailleImagette, String typeSeuil, String seuillage) {
+    /**
+     * @param chemin c'est le chemin d'accès npour le fichier
+     * @param sigma valeur de la variance du bruit gaussien
+     * @param choixPatch définie la méthode patch, il y'en a deux "local" et "global"
+     * @param taillePatch définie la taille du patch 
+     * @param tailleImagette définie la taille de l'imagette dans le cas d'une acp local ou il faut decouper l'image
+     * @param typeSeuil définie le type de seuil choisi pour la rceconstruction
+     * @param seuillage
+     * @return
+     */
+    
+    //l'erreur ici provient du afit que je n'ai pas encore mis le retour de la fonction
+    public  BufferedImage ImageDen(String chemin, double sigma,String choixPatch, int taillePatch,int tailleImagette, String typeSeuil, String seuillage) {
     	ACP function=new ACP();
     	Photo photo=new Photo(chemin);
     	//brutage de la photo
@@ -331,18 +343,28 @@ public class Photo {
     	    		System.out.print("Choix de la fonction seuil inconnu");
 
     	    	}
-    	    	//apres avoir patche et seuille on passe a la reconstruction de l'image
-    	    	//il faut d'abord dévectoctererse les patch 
-    	    	//puis reconstruire les patch , par contre la fonctiojn reconstructPatch necessite 
-    	    	//la position et celle ci n'est donnée à aucune fonction
-    	    	//et il faudrait penser a changer tous les "int" en "double" parce que c'est assez restrictif 
-    	    	//de considerer que des int en sachant que des doubles sont aussi des int
-    	    	//ça évitera des conflits et des probnlèmes de conversion    	    	
+    	    	//apres avoir patché et seuillé on passe à la reconstruction de l'image
+    	    	//il faut d'abord dévectocterirse les patch 
+    	    	//puis reconstruire les patch , par contre la fonctiojn reconstructPatch nécessite 
+    	    	//la position des patch et celle ci n'est donnée par aucune fonction(elle devrait etre donnees par la fonction extractPatch)
+    	    	//donc je suis un peu bloqué
+    	    	//et il faudrait penser à changer tous les "int" en "double" parce que c'est assez restrictif 
+    	    	//de considérer que des int en sachant que des doubles sont aussi des int
+    	    	//ça évitera des conflits et des problèmes de conversion au niveau des tableaux    	    	
     	    		
     	    
     	    	
     		}
-    		//en effet il faut distinguer une acp local et une acp global
+    		//en effet il faut distinguer une acp local et une acp global ce cas est pour l'acp local
+    		//on découpe l'image en plusieurs imagettes
+    		//on extractPatch sur chacune des imagettes
+    		//on vectoriser
+    		//puis faire une acp sur chacune des imagettes
+    		//puis faire uns euillage
+    		//puis reconstruire les imagettes
+    		//et enfin reconstruire l'image
+    		//on gros ce bloc reprendra énormément des éléments du bloc précédent
+    		//il serait donc intéréssant de afctoriser le code pour éviter les répétitions
     		else {
     			ArrayList<BufferedImage> listImagette =photo.decoupeImage(tailleImagette);
     			for(BufferedImage image: listImagette) {
