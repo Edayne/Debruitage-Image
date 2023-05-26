@@ -176,6 +176,7 @@ public class Photo {
     public BufferedImage arrayToImage(int[][] matrix) {
         int width = matrix.length;
         int height = matrix[0].length;
+        System.out.println("width =" + width + "\theight = " + height);
         BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         for (int i = 0; i < matrix.length; i++) {
             for (int j = 0; j < matrix[0].length; j++) {
@@ -258,12 +259,13 @@ public class Photo {
     }
 
     /**
-     * Transforme une liste de int[][] en une liste de int[], soit une vectorisation de matrice
-     * @param listPatchs
-     * @return
+     * Transforme une liste de int[][] en une liste de int[], soit une vectorisation de matrice en s
+     * @param listPatchs Liste de matrices
+     * @return La liste des patchs vectorisés
      */
     public List<int[]> vectorPatchs(List<int[][]> listPatchs) {
         List<int[]> listPatchVect = new ArrayList<>();
+
         for (int[][] patch : listPatchs) {
             int s = patch.length;
             int[] patchVect = new int[s*s];
@@ -276,7 +278,6 @@ public class Photo {
                 }
             }
         }
-
         return listPatchVect;
     }
     
