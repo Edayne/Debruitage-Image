@@ -3,6 +3,7 @@ import java.util.List;
 import java.awt.image.BufferedImage;
 import Jama.Matrix;
 import Jama.EigenvalueDecomposition;
+import Jama.*;
 
 
 public class ACP {
@@ -146,7 +147,7 @@ public class ACP {
     }
 
     /**
-     * 
+     * Calcule de la covariance d'une liste de vecteurs
      * @param V Tableau de patchs vectorisés
      * @return Renvoit la matrice de covariance de ces vecteurs
      */
@@ -174,11 +175,13 @@ public class ACP {
      * @param V Liste des vecteurs des patchs
      * @return List des vecteurs des patchs centrés
      */
-    public List<double[]> calculerVecteursCentres(List<int[]> V) {
-        int dimV = V.get(0).length;
+    public ArrayList<double[]> calculerVecteursCentres(ArrayList<int[]> V) {
+        System.out.println(V.size());
+        int[] vectNum0 = V.get(0);
+        int dimV = vectNum0.length;
         double[] mV = calculVecteurMoyen(V);
 
-        List<double[]> Vc = new ArrayList<>();
+        ArrayList<double[]> Vc = new ArrayList<>();
         for (int[] vecteur : V) {
             for (int j = 0; j < dimV; j++) {
                 double[] vectCent = new double[dimV];
@@ -216,7 +219,7 @@ public class ACP {
         return vectPropre;
     }
 
-    public double[][] acp (List<int[]> V){
+    public double[][] acp (ArrayList<int[]> V){
         double [][] covariance = calculMatriceCovariance(V);
         //On récupère les valeurs propres de Cov
         Matrix covMatrix = new Matrix(covariance);
@@ -233,7 +236,7 @@ public class ACP {
      * @param V_centree Les patchs vectorisés centrés
      * @return La projection de V_centree dans U
      */
-    public double[][] proj(double[][] U, List<double[]> V_centree ){
+    public double[][] proj(double[][] U, ArrayList<double[]> V_centree ){
         double[][] projection = new double[V_centree.size()][U[0].length];
         int k = 0;
         double coef;
@@ -246,11 +249,7 @@ public class ACP {
                 projection[k][i]= coef;
             }
             k++;
-            
         }
         return projection;
     }
-    
-    
-    
 }//fin

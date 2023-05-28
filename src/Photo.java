@@ -124,15 +124,15 @@ public class Photo {
      * @param s Entier représentant la taille d'un patch
      * @return une liste dynamique de patchs
      */
-    public List<int[][]> extractPatchs(BufferedImage photo, int s) {
+    public ArrayList<int[][]> extractPatchs(BufferedImage photo, int s) {
         int l = photo.getHeight();
         int c = photo.getWidth();
-        List<int[][]> listPatches = new ArrayList<>();
+        ArrayList<int[][]> listPatches = new ArrayList<>();
         int [][] pospat = new int[l][c];
         for(int i=0; i<l-s;i++){
             for(int j=0; j<c-s;j++){
-                List<Integer> listL = new ArrayList<>();
-                List<Integer> listC = new ArrayList<>();
+                ArrayList<Integer> listL = new ArrayList<>();
+                ArrayList<Integer> listC = new ArrayList<>();
                 for(int k=i; k< i+s;k++){
                     listL.add((k%l)+1);
                 }
@@ -150,8 +150,43 @@ public class Photo {
                 listPatches.add(patch);
                 updatePospat(pospat,listL,listC);
             }
-        }
+        }     
         return listPatches;
+    }
+
+    /**
+     * Extrait la position d'une image bruitée (meme fonction que extractPatchs, pas le meme retour)
+     * @param s Entier représentant la taille d'un patch
+     * @return La position des patchs
+     */
+    public int[][] extractPosPatchs(BufferedImage photo, int s) {
+        int l = photo.getHeight();
+        int c = photo.getWidth();
+        ArrayList<int[][]> listPatches = new ArrayList<>();
+        int [][] pospat = new int[l][c];
+        for(int i=0; i<l-s;i++){
+            for(int j=0; j<c-s;j++){
+                ArrayList<Integer> listL = new ArrayList<>();
+                ArrayList<Integer> listC = new ArrayList<>();
+                for(int k=i; k< i+s;k++){
+                    listL.add((k%l)+1);
+                }
+                for(int k=j ; k<j+s; k++){
+                    listC.add((k%c)+1);
+                }
+
+                int [][] patch = new int[s][s];
+                for(int k=0; k< s; k++){
+                    for(int m=0; m< s; m++){
+                        patch[k][m] = getPixelValue(photo, listL.get(k)-1, listC.get(m)-1);
+                    }
+                }
+
+                listPatches.add(patch);
+                updatePospat(pospat,listL,listC);
+            }
+        }     
+        return pospat;
     }
 
     /**
@@ -160,7 +195,7 @@ public class Photo {
      * @param listL 
      * @param listC
      */
-    public static void updatePospat(int[][] pospat, List<Integer> listL, List<Integer> listC) {
+    public static void updatePospat(int[][] pospat, ArrayList<Integer> listL, ArrayList<Integer> listC) {
         for (int i = 0; i < listL.size(); i++) {
             for (int j = 0; j < listC.size(); j++) {
                 pospat[listL.get(i)][listC.get(j)]++;
@@ -212,7 +247,7 @@ public class Photo {
      * @param posPatchs Matrice contenant le nombre de patchs dans lequel le pixel à la coordonnée associée apparait
      * @return L'image recréée
      */
-    public BufferedImage reconstructPatch(List<int[][]> listPatchs, int[][] posPatchs) {
+    public BufferedImage reconstructPatch(ArrayList<int[][]> listPatchs, int[][] posPatchs) {
         int s = listPatchs.get(0).length; //Taille d'un patch
         int L = posPatchs.length;
         int C = posPatchs[0].length;
@@ -263,9 +298,8 @@ public class Photo {
      * @param listPatchs Liste de matrices
      * @return La liste des patchs vectorisés
      */
-    public List<int[]> vectorPatchs(List<int[][]> listPatchs) {
-        List<int[]> listPatchVect = new ArrayList<>();
-
+    public ArrayList<int[]> vectorPatchs(ArrayList<int[][]> listPatchs) {
+        ArrayList<int[]> listPatchVect = new ArrayList<>();
         for (int[][] patch : listPatchs) {
             int s = patch.length;
             int[] patchVect = new int[s*s];
@@ -277,6 +311,7 @@ public class Photo {
                     k++;
                 }
             }
+            listPatchVect.add(patchVect);
         }
         return listPatchVect;
     }

@@ -26,47 +26,86 @@ public class Main {
         JFrame frame = new JFrame();
         frame.getContentPane().setLayout(new FlowLayout());
         frame.getContentPane().add(new JLabel(new ImageIcon(lena.getPhotoBruitee())));
+        frame.setTitle("Image bruitée : sigma^2 = "+ sigma2);
         frame.pack();
         frame.setVisible(true);
 
         //Extraction des patchs et vectorisation
-        System.out.println("Démarrage de l'extraction des patchs...");
-        List<int[][]> listPatches = lena.extractPatchs(lena.getPhotoBruitee(), 20);
-        System.out.println("\textract terminé");
-        List<int[]> listVectPatch = lena.vectorPatchs(listPatches);
-        System.out.println("\tvectorisation terminée");
-        List<double[]> listVectPatchCent = outilsAcp.calculerVecteursCentres(listVectPatch);
-        System.out.println("\tcentralisation terminée");
-        System.out.println("Fin de l'extraction des patchs !n");
+        int taillePatch = 20;
+        System.out.println("Démarrage de l'extraction des patchs... (s = "+taillePatch+")");
+        ArrayList<int[][]> listPatches = lena.extractPatchs(lena.getPhotoBruitee(), taillePatch);
+        int[][] posPatchs = lena.extractPosPatchs(lena.getPhotoBruitee(), taillePatch);
+        System.out.println("\tNombre de patchs extraits = " + listPatches.size());
+        System.out.println("\tExtraction terminée !\n");
+
+        System.out.println("\tDébut de la vectorisation...");
+        ArrayList<int[]> listVectPatch = lena.vectorPatchs(listPatches);
+        System.out.println("\tVectorisation terminée !\n");
+        
+        System.out.println("\tCalcul des vecteurs centrés...");
+        ArrayList<double[]> listVectPatchCent = outilsAcp.calculerVecteursCentres(listVectPatch);
+        System.out.println("\tCréation de la liste des vecteurs centrés terminée !");
+
+        System.out.println("Fin de l'extraction des patchs !\n");
 
         //Application de l'ACP
         System.out.println("Démarrage de l'ACP...");
+
         double[] mV = outilsAcp.calculVecteurMoyen(listVectPatch);
+
+        System.out.println("\tCalcul de la base de projection...");
         double[][] baseACP = outilsAcp.acp(listVectPatch);
-        double[][] projection = outilsAcp.proj(baseACP, listVectPatchCent); //Stocke les alpha_i, coordonnées des vecteurs dans la base de l'ACP
+        System.out.println("\tCréation de la base orthonormale !\n");
+
+        System.out.println("\tProjection des vecteurs dans la base de l'ACP...");
+        double[][] projection = outilsAcp.proj(baseACP, listVectPatchCent); //Stocke les alpha_i, coordonnées des vecteurs centrés dans la base de l'ACP
+        System.out.println("\tProjection réussie !");
         System.out.println("Fin de l'ACP !\n");
 
         //Tous les seuillages possibles
-        System.out.println("Calcul des seuils...");
+        System.out.println("Début du seuillage des coefficients des vecteurs post-projection...");
         int nbPixels = lena.getPhoto().getWidth() * lena.getPhoto().getHeight();
         double seuilV = outilsAcp.VisuShrink(nbPixels, sigma);
         double seuilB = outilsAcp.BayesShrink(sigma, lena.getPhoto());
 
+        System.out.println("Seuils utilisés :");
+        System.out.println("\tSeuil VisuShrink = " + seuilV);
+        System.out.println("\tSeuil BayesShrink = " + seuilB);
+
+        System.out.print("\n\tSeuillage dur avec le seuil V...");
         double[][] projSeuilDurV = outilsAcp.seuillageDur(seuilV, projection);
+        System.out.println("\tTerminé !");
+        System.out.print("\tSeuillage dur avec le seuil B...");
         double[][] projSeuilDurB = outilsAcp.seuillageDur(seuilB, projection);
+        System.out.println("\tTerminé !");
+        System.out.print("\tSeuillage doux avec le seuil V...");
         double[][] projSeuilDouxV = outilsAcp.seuillageDoux(seuilV, projection);
+        System.out.println("\tTerminé !");
+        System.out.print("\tSeuillage doux avec le seuil B...");
         double[][] projSeuilDouxB = outilsAcp.seuillageDoux(seuilB, projection);
+        System.out.println("\tTerminé !");
+
+        System.out.println("Fin du seuillage !\n");
 
         //Débruitage selon les différents seuillages
-        System.out.println("Débruitage en fonction des seuils...");
+        System.out.println("Début du débruitage...");
+
+        System.out.print("\tSeuil V dur...");
         List<double[]> listDebDurV = lena.ImageDebr(projSeuilDurV, mV, baseACP);
         BufferedImage imageDurV = lena.toBufferedImage(listDebDurV);
+        System.out.println("\tTerminé !");
+        System.out.print("\tSeuil B dur...");
         List<double[]> listDebDurB = lena.ImageDebr(projSeuilDurB, mV, baseACP);
         BufferedImage imageDurB = lena.toBufferedImage(listDebDurB);
+        System.out.println("\tTerminé !");
+        System.out.print("\tSeuil V doux...");
         List<double[]> listDebDouxV = lena.ImageDebr(projSeuilDouxV, mV, baseACP);
         BufferedImage imageDouxV = lena.toBufferedImage(listDebDouxV);
+        System.out.println("\tTerminé !");
+        System.out.print("\tSeuil B doux...");
         List<double[]> listDebDouxB = lena.ImageDebr(projSeuilDouxB, mV, baseACP);
         BufferedImage imageDouxB = lena.toBufferedImage(listDebDouxB);
+        System.out.println("\tTerminé !");
         System.out.println("Fin du débruitage !\n");
 
         //Calcul des erreurs
@@ -83,7 +122,6 @@ public class Main {
         listErreurPSNR[1] = outilsAcp.calculatePSNR(lena.getPhoto(), imageDurB);
         listErreurPSNR[2] = outilsAcp.calculatePSNR(lena.getPhoto(), imageDouxV);
         listErreurPSNR[3] = outilsAcp.calculatePSNR(lena.getPhoto(), imageDouxB);
-
         
         System.out.println("L'erreur pour le seuillage dur pour le seuil V (MSE) :" + listErreurMSE[0]);
         System.out.println("L'erreur pour le seuillage dur pour le seuil V (PSNR) :" + listErreurPSNR[0]);
@@ -104,24 +142,28 @@ public class Main {
 
         JFrame frameDurV = new JFrame();
         frameDurV.getContentPane().setLayout(new FlowLayout());
+        frameDurV.setTitle("Dur V");
         frameDurV.getContentPane().add(new JLabel(new ImageIcon(nvImageDurV)));
         frameDurV.pack();
         frameDurV.setVisible(true);
 
         JFrame frameDurB = new JFrame();
         frameDurB.getContentPane().setLayout(new FlowLayout());
+        frameDurB.setTitle("Dur B");
         frameDurB.getContentPane().add(new JLabel(new ImageIcon(nvImageDurB)));
         frameDurB.pack();
         frameDurB.setVisible(true);
 
         JFrame frameDouxV = new JFrame();
         frameDouxV.getContentPane().setLayout(new FlowLayout());
+        frameDouxV.setTitle("Doux V");
         frameDouxV.getContentPane().add(new JLabel(new ImageIcon(nvImageDouxV)));
         frameDouxV.pack();
         frameDouxV.setVisible(true);
 
         JFrame frameDouxB = new JFrame();
         frameDouxB.getContentPane().setLayout(new FlowLayout());
+        frameDouxB.setTitle("Doux B");
         frameDouxB.getContentPane().add(new JLabel(new ImageIcon(nvImageDouxB)));
         frameDouxB.pack();
         frameDouxB.setVisible(true);
