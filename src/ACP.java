@@ -176,17 +176,19 @@ public class ACP {
      * @return List des vecteurs des patchs centrés
      */
     public ArrayList<double[]> calculerVecteursCentres(ArrayList<int[]> V) {
-        System.out.println(V.size());
+        ArrayList<double[]> Vc = new ArrayList<>();
+
         int[] vectNum0 = V.get(0);
         int dimV = vectNum0.length;
         double[] mV = calculVecteurMoyen(V);
+        
 
-        ArrayList<double[]> Vc = new ArrayList<>();
         for (int[] vecteur : V) {
+            double[] vectCent = new double[dimV];
             for (int j = 0; j < dimV; j++) {
-                double[] vectCent = new double[dimV];
                 vectCent[j] = vecteur[j] - mV[j];
             }
+            Vc.add(vectCent);
         }
         return Vc;
     }
@@ -220,9 +222,11 @@ public class ACP {
     }
 
     public double[][] acp (ArrayList<int[]> V){
+        System.out.println("\t\tCalcul de la matrice de covariance...");
         double [][] covariance = calculMatriceCovariance(V);
         //On récupère les valeurs propres de Cov
         Matrix covMatrix = new Matrix(covariance);
+        System.out.println("\t\tCalcul des vecteurs propres de la matrice de covariance...");
         EigenvalueDecomposition EvD = new EigenvalueDecomposition(covMatrix);
         
         Matrix vectPropre = EvD.getV(); //Matrice des vecteurs propres 
@@ -237,19 +241,37 @@ public class ACP {
      * @return La projection de V_centree dans U
      */
     public double[][] proj(double[][] U, ArrayList<double[]> V_centree ){
-        double[][] projection = new double[V_centree.size()][U[0].length];
-        int k = 0;
+        int nbVecteurs = V_centree.size(); //yavait écrit U.length avant
+        int dimACP = U[0].length;
+        double[][] projection = new double[nbVecteurs][dimACP];
+
+        int k = 0; //Indice du vecteur actuel
         double coef;
+
         for (double[] vecteur : V_centree) {
-            for (int i=0; i<U[0].length;i++) {
+            for (int i=0; i<U[0].length;i++) { //On calcule la ieme coordonnée du k-eme vecteur
                 coef=0;
                 for(int j=0; j<vecteur.length;j++) {
-                   coef+= vecteur[j]*U[i][j];
+                   coef += U[j][i]*vecteur[j];
                 }
-                projection[k][i]= coef;
+                projection[k][i] = coef;
             }
             k++;
         }
         return projection;
     }
+
+    // public double[][] proj2(double[][] U, ArrayList<double[]> V_centree ){
+    //     double[][] projection = new double[V_centree.size()][U[0].length];
+
+    //     for (int j = 0; j<V_centree.size(); j++) {
+    //         double[] vecteur = V_centree.get(j);
+    //         double coefProj = 0.0;
+    //         int k=0;
+    //         for (int i=0; i<U.length; i++){
+    //             coefProj += U[i][j]*vecteur[j];
+    //         }
+            
+    //     }
+    // }
 }//fin

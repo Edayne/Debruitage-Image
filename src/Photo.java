@@ -325,17 +325,15 @@ public class Photo {
      */
     public List<double[]> ImageDebr(double[][] coefPostSeuil, double[] mV, double[][] base) {
     	List<double[]> nvPatchList = new ArrayList<>();
-        int L = coefPostSeuil.length;
-        int C = coefPostSeuil[0].length;
-
-        for (int i = 0; i < L; i++) {
+        int nbVecteurs = coefPostSeuil.length;
+        int nbCoord = coefPostSeuil[0].length;
+        for (int i = 0; i < nbVecteurs; i++) {
             double[] nvVecteur = new double[mV.length]; //correspond au Z_i de l'énoncé
-            for (int j = 0; j < C; j++) {
+            for (int j = 0; j < nbCoord; j++) {
                 nvVecteur[j] = mV[j] + coefPostSeuil[i][j]*base[i][j];
             }
             nvPatchList.add(nvVecteur);
         }
-
         return nvPatchList;
     }
 
@@ -349,17 +347,37 @@ public class Photo {
 
         for(int i=0; i<nbL; i++) {
             double[] vecteur = listeVect.get(i);
-            for(int j = 0; j < nbC; j++) {
+            int tailleVect = vecteur.length;
+            // System.out.println(listeVect.size());
+            // for (int k=0; k<tailleVect; k++){
+            //     System.out.println(vecteur[k]);
+            // }
+            for(int j = 0; j < tailleVect; j++) {
                 int rgb = (int)vecteur[j]<<16 | (int)vecteur[j] << 8 | (int)vecteur[j];
                 image.setRGB(i, j, rgb);
             }
         }
         try {
-            ImageIO.write(image, "Doublearray", new File("../donned/Doublearray.jpg"));
+            ImageIO.write(image, "Doublearray", new File("../donnes/Doublearray.jpg"));
             System.out.println("end");
         } catch (Exception e) {
             System.err.println("IMPOSSIBLE D'ECRIRE ICI");
         }
+        return image;
+    }
+    
+    public BufferedImage toBufferedImageNUL(List<double[]> listeVect) {
+        BufferedImage image = new BufferedImage(nbL, nbC, 3);
+        
+        for(int i=0; i<nbL; i++) {
+            double[] vecteur = listeVect.get(i);
+            for(int j = 0; j < nbC; j++) {
+                System.out.println(j);
+                int rgb = (int) Math.floor(vecteur[j]);
+                image.setRGB(i, j, rgb);
+            }
+        }
+
         return image;
     }
 

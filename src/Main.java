@@ -25,13 +25,15 @@ public class Main {
         //Affichage d'une image
         JFrame frame = new JFrame();
         frame.getContentPane().setLayout(new FlowLayout());
+        frame.getContentPane().add(new JLabel(new ImageIcon(lena.getPhoto())));
         frame.getContentPane().add(new JLabel(new ImageIcon(lena.getPhotoBruitee())));
         frame.setTitle("Image bruitée : sigma^2 = "+ sigma2);
         frame.pack();
         frame.setVisible(true);
 
         //Extraction des patchs et vectorisation
-        int taillePatch = 20;
+        int taillePatch = 3;
+
         System.out.println("Démarrage de l'extraction des patchs... (s = "+taillePatch+")");
         ArrayList<int[][]> listPatches = lena.extractPatchs(lena.getPhotoBruitee(), taillePatch);
         int[][] posPatchs = lena.extractPosPatchs(lena.getPhotoBruitee(), taillePatch);
@@ -59,6 +61,7 @@ public class Main {
 
         System.out.println("\tProjection des vecteurs dans la base de l'ACP...");
         double[][] projection = outilsAcp.proj(baseACP, listVectPatchCent); //Stocke les alpha_i, coordonnées des vecteurs centrés dans la base de l'ACP
+        
         System.out.println("\tProjection réussie !");
         System.out.println("Fin de l'ACP !\n");
 
@@ -92,7 +95,8 @@ public class Main {
 
         System.out.print("\tSeuil V dur...");
         List<double[]> listDebDurV = lena.ImageDebr(projSeuilDurV, mV, baseACP);
-        BufferedImage imageDurV = lena.toBufferedImage(listDebDurV);
+        BufferedImage imageDurV = lena.toBufferedImage(listDebDurV); 
+        //PB ICI, listDebDurV devrait contenir la liste des patchs vectorisés donc une liste de taille 250k à peu pres mais il n'y a que s^2=9 vecteurs on dirait
         System.out.println("\tTerminé !");
         System.out.print("\tSeuil B dur...");
         List<double[]> listDebDurB = lena.ImageDebr(projSeuilDurB, mV, baseACP);
