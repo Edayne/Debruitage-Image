@@ -143,7 +143,7 @@ public class ACP {
             }
             mV[j] = somme/nb_vecteurs; // Le vecteur moyen est égale à la somme des vecteurs divisé par le nombre de vecteurs
         }
-        return mV;   
+        return mV;
     }
 
     /**

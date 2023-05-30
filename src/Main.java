@@ -17,19 +17,23 @@ public class Main {
 		Photo lena = new Photo("donnees/lena.png"); //Stocke l'image et les méthodes des patchs
         ACP outilsAcp = new ACP(); //Boîte à outils mathématique
 
-        //Bruitage de l'image
-        double sigma2 = 20.0;
+        double sigma2 = 10.0;
         double sigma = Math.sqrt(sigma2);
-		lena.noising(lena.getPhoto(), sigma2);
+        for (int i=1; i<4; i++) {
+            //Bruitage de l'image
+            sigma2 = i*10.0;
+            sigma = Math.sqrt(sigma2);
+            lena.noising(lena.getPhoto(), sigma2);
 
-        //Affichage d'une image
-        JFrame frame = new JFrame();
-        frame.getContentPane().setLayout(new FlowLayout());
-        frame.getContentPane().add(new JLabel(new ImageIcon(lena.getPhoto())));
-        frame.getContentPane().add(new JLabel(new ImageIcon(lena.getPhotoBruitee())));
-        frame.setTitle("Image bruitée : sigma^2 = "+ sigma2);
-        frame.pack();
-        frame.setVisible(true);
+            //Affichage d'une image
+            JFrame frame = new JFrame();
+            frame.getContentPane().setLayout(new FlowLayout());
+            frame.getContentPane().add(new JLabel(new ImageIcon(lena.getPhoto())));
+            frame.getContentPane().add(new JLabel(new ImageIcon(lena.getPhotoBruitee())));
+            frame.setTitle("Image bruitée : sigma^2 = "+ sigma2);
+            frame.pack();
+            frame.setVisible(true);
+        }
 
         //Extraction des patchs et vectorisation
         int taillePatch = 3;
