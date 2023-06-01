@@ -15,6 +15,7 @@ public class Photo {
     private BufferedImage photoBruitee;
     private int nbL;
     private int nbC;
+    private int nbPixel;
 
     //Constructeurs
     public Photo(String chemin) {
@@ -22,6 +23,7 @@ public class Photo {
             this.photo = ImageIO.read(new File(chemin)); 
             this.nbC = this.photo.getWidth();
             this.nbL = this.photo.getHeight();
+            this.nbPixel=this.nbL*this.nbC;
         } catch (IOException e) {
             System.out.println("Fichier introuvable, réessayez !");
         }
@@ -83,7 +85,15 @@ public class Photo {
         this.nbC = nbC;
     }
 
-    /**
+    public int getNbPixel() {
+		return nbPixel;
+	}
+
+	public void setNbPixel(int nbPixel) {
+		this.nbPixel = nbPixel;
+	}
+
+	/**
      * @return BufferedImage return la photo bruitée
      */
     public void noising(BufferedImage photo, double sigma) {
@@ -336,6 +346,27 @@ public class Photo {
         }
         return listImagette;
     }
+    
+    /**
+     * Découpe l'image en une collection d'images de taille W
+     * @param photo L'image initiale
+     * @param tailleW La taille des imagettes extraites
+     * @return Une collection de petites images
+     */
+    public ArrayList<BufferedImage> decoupeImage1(BufferedImage photo, int tailleW){
+        ArrayList<BufferedImage> listImagette = new ArrayList<>();
+        int L = photo.getHeight();
+        int C = photo.getWidth();
+        int nbImL = L/tailleW; 
+        int nbImC = C/tailleW;
+        for (int i = 0; i < nbImL; i++) {
+            for (int j = 0; j < nbImC; j++) {
+                BufferedImage imagette = photo.getSubimage(j*tailleW, i*tailleW, tailleW, tailleW);
+                listImagette.add(imagette);
+            }
+        }
+        return listImagette;
+    }
 
     /**
      * Transforme une liste de int[][] en une liste de int[], soit une vectorisation de matrice en s
@@ -429,105 +460,140 @@ public class Photo {
         return image;
     }
 
-/*    
-    //  /**
-    //  * @param chemin c'est le chemin d'accès npour le fichier
-    //  * @param sigma valeur de la variance du bruit gaussien
-    //  * @param choixPatch définie la méthode patch, il y'en a deux "local" et "global"
-    //  * @param taillePatch définie la taille du patch 
-    //  * @param tailleImagette définie la taille de l'imagette dans le cas d'une acp local ou il faut decouper l'image
-    //  * @param typeSeuil définie le type de seuil choisi pour la rceconstruction
-    //  * @param seuillage
-    //  * @return
-    //  */
     
-    // //l'erreur ici provient du afit que je n'ai pas encore mis le retour de la fonction
-    // public  BufferedImage ImageDen(String chemin, double sigma,String choixPatch, int taillePatch,int tailleImagette, String typeSeuil, String seuillage) {
-    // 	ACP function=new ACP();
-    // 	Photo photo=new Photo(chemin);
-    // 	//brutage de la photo
-    // 	photo.noising(sigma);
-    // 	//extraction des patch de taille s en fonction du choix de la fonctin de patch local ou global
-    // 	if(!(choixPatch.equalsIgnoreCase("local") || choixPatch.equalsIgnoreCase("global") )) {
-    // 		System.out.print("Choix de la fonction pour l'extraction de patch inconnu !");
-    // 	}else {
-    // 		if(choixPatch.equalsIgnoreCase("GLOBAL")) {
-    // 			//extraction de patch sur l'image global
-    // 	    	List<int[][]> listPatchs=photo.extractPatchs(taillePatch);
-    // 	    	//vectorisation des patch
-    // 	    	List<int[]> vectorPatchD=photo.vectorPatchs(listPatchs);
-    // 	    	//converstion des list de patch en double[][]
-    // 	    	double [][] vectorPatch;
-    // 	    	vectorPatch=function.convertListIntabDouble(vectorPatchD);
-    // 	    	//centrage des patch vectorisé
-    // 	    	double[][] vecteurCentre=function.calculerVecteursCentres(vectorPatch);
-    // 	    	//ACp sur les vecteurs centrée
-    // 	    	double[][] baseAcp=function.acp(vecteurCentre);
-    // 	    	//projection des vecteurs
-    // 	    	double[][] vectProj=function.Proj(baseAcp, vecteurCentre);
-    // 	    	//disjonction des cas en fonction du choix du seuillage
-    // 	    	if(seuillage.equalsIgnoreCase("dur") || seuillage.equalsIgnoreCase("doux")) {
-    // 	    		if(seuillage.equalsIgnoreCase("dur")) {
-    // 	    			//disjonction des cas en fonctions du choix du type de seuil
-    // 	    			if(typeSeuil.equalsIgnoreCase("seuilV") || typeSeuil.equalsIgnoreCase("seuilB") ) {
-    // 	    				if(typeSeuil.equalsIgnoreCase("seuilV")) {
-    // 	    					double seuil= function.VisuShrink(photo.nbPixel, sigma);
-    // 	    					double[][] 	vectSeuill=function.seuillageDur(seuil, vectProj);
-    // 	    				}else {
-    // 	    					double seuil= function.BayesShrink(taillePatch, photo.getPhoto());
-    // 	    					double[][] 	vectSeuill=function.seuillageDur(seuil, vectProj);
-    // 	    				}
-    // 	    			}else {
-    // 	    	    		System.out.print("Choix du type de seuil inconnu seuil inconnu");
-    // 	    			}
-    // 	    		}else {
-    // 	    			//disjonction des cas en fonctions du choix du type de seuil
-    // 	    			if(typeSeuil.equalsIgnoreCase("seuilV") || typeSeuil.equalsIgnoreCase("seuilB") ) {
-    // 	    				if(typeSeuil.equalsIgnoreCase("seuilV")) {
-    // 	    					double seuil= function.VisuShrink(photo.nbPixel, sigma);
-    // 	    					double[][] 	vectSeuill=function.seuillageDoux(seuil, vectProj);
-    // 	    				}else {
-    // 	    					double seuil= function.BayesShrink(taillePatch, photo.getPhoto());
-    // 	    					double[][] 	vectSeuill=function.seuillageDoux(seuil, vectProj);
-    // 	    				}
-    // 	    			}else {
-    // 	    	    		System.out.print("Choix du type de seuil inconnu seuil inconnu");
-    // 	    			}
-    	    			
-    // 	    		}
-    // 	    	}else {
-    // 	    		System.out.print("Choix de la fonction seuil inconnu");
-
-    // 	    	}
-    // 	    	//apres avoir patché et seuillé on passe à la reconstruction de l'image
-    // 	    	//il faut d'abord dévectocterirse les patch 
-    // 	    	//puis reconstruire les patch , par contre la fonctiojn reconstructPatch nécessite 
-    // 	    	//la position des patch et celle ci n'est donnée par aucune fonction(elle devrait etre donnees par la fonction extractPatch)
-    // 	    	//donc je suis un peu bloqué
-    // 	    	//et il faudrait penser à changer tous les "int" en "double" parce que c'est assez restrictif 
-    // 	    	//de considérer que des int en sachant que des doubles sont aussi des int
-    // 	    	//ça évitera des conflits et des problèmes de conversion au niveau des tableaux    	    	
-    	    		
-    	    
+     /**
+     * @param chemin c'est le chemin d'accès npour le fichier
+     * @param sigma valeur de la variance du bruit gaussien
+     * @param choixPatch définie la méthode patch, il y'en a deux "local" et "global"
+     * @param taillePatch définie la taille du patch 
+     * @param tailleImagette définie la taille de l'imagette dans le cas d'une acp local ou il faut decouper l'image
+     * @param typeSeuil définie le type de seuil choisi pour la rceconstruction
+     * @param seuillage
+     * @return
+     */
+    
+    //l'erreur ici provient du afit que je n'ai pas encore mis le retour de la fonction
+    public  BufferedImage ImageDen(String chemin, double sigma,String choixPatch, int taillePatch,int tailleImagette, String typeSeuil, String seuillage) {
+    	ACP function=new ACP();
+    	Photo photo=new Photo(chemin);
+    	//brutage de la photo
+    	photo.noising(photo.getPhoto(),sigma);
+    	//extraction des patch de taille s en fonction du choix de la fonctin de patch local ou global
+    	if(!(choixPatch.equalsIgnoreCase("local") || choixPatch.equalsIgnoreCase("global") )) {
+    		System.out.print("Choix de la fonction pour l'extraction de patch inconnu !");
+    	}else {
+    		if(choixPatch.equalsIgnoreCase("GLOBAL")) {
+    			//extraction de patch sur l'image global
+    	    	ArrayList<int[][]> listPatchs=photo.extractPatchs(photo.getPhotoBruitee(),taillePatch);
+    	        int[][] posPatchs = photo.extractPosPatchs(photo.getPhotoBruitee(), taillePatch);
+    	    	//vectorisation des patch
+    	    	ArrayList<int[]> vectorPatch=photo.vectorPatchs(listPatchs);
     	    	
-    // 		}
-    // 		//en effet il faut distinguer une acp local et une acp global ce cas est pour l'acp local
-    // 		//on découpe l'image en plusieurs imagettes
-    // 		//on extractPatch sur chacune des imagettes
-    // 		//on vectoriser
-    // 		//puis faire une acp sur chacune des imagettes
-    // 		//puis faire uns euillage
-    // 		//puis reconstruire les imagettes
-    // 		//et enfin reconstruire l'image
-    // 		//on gros ce bloc reprendra énormément des éléments du bloc précédent
-    // 		//il serait donc intéréssant de afctoriser le code pour éviter les répétitions
-    // 		else {
-    // 			ArrayList<BufferedImage> listImagette =photo.decoupeImage(tailleImagette);
-    // 			for(BufferedImage image: listImagette) {
-    //     	    	List<int[][]> patch=photo.extractPatchs(taillePatch);
-    // 			}
+    	    	//converstion des list de patch en double[][]
+    	    	//double [][] vectorPatch;
+    	    	//vectorPatch=function.convertListIntabDouble(vectorPatchD);
+    	    	//calcul vecteur moyen
+    	        double[] mV = function.calculVecteurMoyen(vectorPatch);
+    	    	//centrage des patch vectorisé
+    	    	ArrayList<double[]> vecteurCentre=function.calculerVecteursCentres(vectorPatch);
+    	    	//ACp sur les vecteurs centrée
+    	    	double[][] baseAcp=function.acp(vectorPatch);
+    	    	//projection des vecteurs
+    	    	double[][] vectProj=function.proj(baseAcp, vecteurCentre);
+    	    	//disjonction des cas en fonction du choix du seuillage
+    	    	if(seuillage.equalsIgnoreCase("dur") || seuillage.equalsIgnoreCase("doux")) {
+    	    		if(seuillage.equalsIgnoreCase("dur")) {
+    	    			//disjonction des cas en fonctions du choix du type de seuil
+    	    			if(typeSeuil.equalsIgnoreCase("seuilV") || typeSeuil.equalsIgnoreCase("seuilB") ) {
+    	    				if(typeSeuil.equalsIgnoreCase("seuilV")) {
+    	    					double seuil= function.VisuShrink(photo.nbPixel, sigma);
+    	    					double[][] 	vectSeuill=function.seuillageDur(seuil, vectProj);
+    	    				    ArrayList<double[]> listDebDurV = photo.ImageDebr(vectSeuill, mV, baseAcp);
+    	    	    	        ArrayList<double[][]> listDebDurV2 = photo.unvectorizeList(listDebDurV);
+    	    	    	        BufferedImage imageDurV2 = photo.reconstructPatch(listDebDurV2, posPatchs);
+    	    	    	    	return imageDurV2;
+    	    				}else {
+    	    					double seuil= function.BayesShrink(taillePatch, photo.getPhoto());
+    	    					double[][] 	vectSeuill=function.seuillageDur(seuil, vectProj);
+    	    				    ArrayList<double[]> listDebDurV = photo.ImageDebr(vectSeuill, mV, baseAcp);
+    	    	    	        ArrayList<double[][]> listDebDurV2 = photo.unvectorizeList(listDebDurV);
+    	    	    	        BufferedImage imageDurV2 = photo.reconstructPatch(listDebDurV2, posPatchs);
+    	    	    	    	return imageDurV2;
+    	    				}
+    	    			}else {
+    	    	    		System.out.print("Choix du type de seuil inconnu seuil inconnu");
+    	    			}
+    	    		}else {
+    	    			//disjonction des cas en fonctions du choix du type de seuil
+    	    			if(typeSeuil.equalsIgnoreCase("seuilV") || typeSeuil.equalsIgnoreCase("seuilB") ) {
+    	    				if(typeSeuil.equalsIgnoreCase("seuilV")) {
+    	    					double seuil= function.VisuShrink(photo.nbPixel, sigma);
+    	    					double[][] 	vectSeuill=function.seuillageDoux(seuil, vectProj);
+    	    				    ArrayList<double[]> listDebDurV = photo.ImageDebr(vectSeuill, mV, baseAcp);
+    	    	    	        ArrayList<double[][]> listDebDurV2 = photo.unvectorizeList(listDebDurV);
+    	    	    	        BufferedImage imageDurV2 = photo.reconstructPatch(listDebDurV2, posPatchs);
+    	    	    	    	return imageDurV2;
+    	    				}else {
+    	    					double seuil= function.BayesShrink(taillePatch, photo.getPhoto());
+    	    					double[][] 	vectSeuill=function.seuillageDoux(seuil, vectProj);
+    	    				    ArrayList<double[]> listDebDurV = photo.ImageDebr(vectSeuill, mV, baseAcp);
+    	    	    	        ArrayList<double[][]> listDebDurV2 = photo.unvectorizeList(listDebDurV);
+    	    	    	        BufferedImage imageDurV2 = photo.reconstructPatch(listDebDurV2, posPatchs);
+    	    	    	    	return imageDurV2;
+    	    				}
+    	    			}else {
+    	    	    		System.out.print("Choix du type de seuil inconnu seuil inconnu");
+    	    			}
+    	    			
+    	    		}
+    	    	}else {
+    	    		System.out.print("Choix de la fonction seuil inconnu");
 
-    // 		}
-    // 	}
-    // }
+    	    	}
+    	    	//apres avoir patché et seuillé on passe à la reconstruction de l'image
+    	    	//il faut d'abord dévectocterirse les patch 
+    	    	//puis reconstruire les patch , par contre la fonctiojn reconstructPatch nécessite 
+    	    	//la position des patch et celle ci n'est donnée par aucune fonction(elle devrait etre donnees par la fonction extractPatch)
+    	    	//donc je suis un peu bloqué
+    	    	//et il faudrait penser à changer tous les "int" en "double" parce que c'est assez restrictif 
+    	    	//de considérer que des int en sachant que des doubles sont aussi des int
+    	    	//ça évitera des conflits et des problèmes de conversion au niveau des tableaux    	    	
+    	        ArrayList<double[]> listDebDurV = photo.ImageDebr(vectProj, mV, baseAcp);
+    	        ArrayList<double[][]> listDebDurV2 = photo.unvectorizeList(listDebDurV);
+    	        BufferedImage imageDurV2 = photo.reconstructPatch(listDebDurV2, posPatchs);
+    	    	return imageDurV2;
+    		}
+    		//en effet il faut distinguer une acp local et une acp global ce cas est pour l'acp local
+    		//on découpe l'image en plusieurs imagettes
+    		//on extractPatch sur chacune des imagettes
+    		//on vectoriser
+    		//puis faire une acp sur chacune des imagettes
+    		//puis faire uns euillage
+    		//puis reconstruire les imagettes
+    		//et enfin reconstruire l'image
+    		//on gros ce bloc reprendra énormément des éléments du bloc précédent
+    		//il serait donc intéréssant de afctoriser le code pour éviter les répétitions
+    		else {
+    			ArrayList<BufferedImage> listImagette =photo.decoupeImage(photo.getPhotoBruitee(),tailleImagette);
+    			//on cree la liste qui va contenir les oimagettes reconstruites
+    			ArrayList<BufferedImage> listImagetteDebruite=new ArrayList<>();
+    			//pour chaque imagette on effectue un debruitage gloobal
+    			for(BufferedImage image: listImagette) {
+        	    	//List<int[][]> patch=photo.extractPatchs(taillePatch);
+    					Photo imagette=new Photo(null);
+    				 	imagette.setPhoto(image); 
+    				 	imagette.setNbC(image.getWidth());
+    				 	imagette.setNbL(image.getHeight());
+    		            imagette.setNbPixel(imagette.getNbC()*imagette.getNbL());
+    		            listImagetteDebruite.add(imagette.ImageDen(chemin, sigma, "global", taillePatch, tailleImagette, typeSeuil, seuillage));
+    			}
+    			//il faut reconstruire les imagettes a partir de la liste des imagettes debruitées
+    			for(int i=0; i<photo.nbL;i++) {
+    				
+    			}
+    			return photo.getPhotoBruitee();
+    		}
+    	}
+    	return photo.getPhotoBruitee();
+    }
 }
