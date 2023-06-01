@@ -153,7 +153,7 @@ public class Accueil extends Application {
                 	float sigma=Float.parseFloat(sig);
                 	try {
                 		Photo image = new Photo(cheminImage);
-                        image.noising(sigma);                                            
+                        image.noising(image.getPhoto(), sigma);                                            
                         //conversion buffered image en image javafx                        
                         WritableImage imageBruitee = SwingFXUtils.toFXImage(image.getPhotoBruitee(), null);                    
                 		// Attribution de l'image à l'ImageView                       
@@ -177,13 +177,24 @@ public class Accueil extends Application {
         });
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------
-        Label l3=new Label("Veuillez selectioner le type de seuil");
+        Label l3=new Label("Veuillez selectioner le type de Patch:");
         ChoiceBox<String> t3 = new ChoiceBox<>();       
-        t3.getItems().addAll("VisuSrhrink", "BayesSrhrink");
+        t3.getItems().addAll("local", "global");
         
-        Label l4=new Label("Veuillez selectioner le type de seuillage");
+        Label l4=new Label("Veuillez selectioner le type de seuillage: ");
         ChoiceBox<String> t4 = new ChoiceBox<>();       
         t4.getItems().addAll("Seuillage dur", "Seuillage doux"); 
+        
+        Label l5=new Label("Veuillez selectioner le type de seuil: ");
+        ChoiceBox<String> t5 = new ChoiceBox<>();       
+        t5.getItems().addAll("VisuSrhrink", "BayesSrhrink"); 
+        
+        Label l6=new Label("Valeur du seuil : ");
+      
+        Label l7=new Label("Valeur de l'erreur : ");
+        
+        Label l8=new Label("Valeur de l'erreur  : ");
+
         
        
         
@@ -193,11 +204,27 @@ public class Accueil extends Application {
         grid3.add(t3, 1, 0);
         grid3.add(l4, 0, 1);
         grid3.add(t4, 1, 1);
+        grid3.add(l5, 0, 2);
+        grid3.add(t5, 1, 2);
         grid3.add(btn_seuil, 1, 3);
+        grid3.add(l6, 0, 4);
+        grid3.add(l7, 0, 5);
+        grid3.add(l8, 0, 6);
+
         
         GridPane.setMargin(l3, margin);
         
         GridPane.setMargin(l4, margin);
+        
+        GridPane.setMargin(l5, margin);
+        
+        GridPane.setMargin(l6, margin);
+        
+        GridPane.setMargin(l7, margin);
+        
+        GridPane.setMargin(l8, margin);
+
+
        
         
         boxFunction.getChildren().add(grid3);
