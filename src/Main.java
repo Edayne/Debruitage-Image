@@ -151,14 +151,14 @@ public class Main {
         listErreurPSNR[2] = outilsAcp.calculatePSNR(lena.getPhoto(), imageDouxV);
         listErreurPSNR[3] = outilsAcp.calculatePSNR(lena.getPhoto(), imageDouxB);
         
-        System.out.println("\tL'erreur pour le seuillage dur pour le seuil V (MSE) : " + listErreurMSE[0]);
-        System.out.println("\tL'erreur pour le seuillage dur pour le seuil V (PSNR) : " + listErreurPSNR[0]);
-        System.out.println("\n\tL'erreur pour le seuillage dur pour le seuil B (MSE) : " + listErreurMSE[1]);
-        System.out.println("\tL'erreur pour le seuillage dur pour le seuil B (PSNR) : " + listErreurPSNR[1]);
-        System.out.println("\n\tL'erreur pour le seuillage doux pour le seuil V (MSE) : " + listErreurMSE[2]);
-        System.out.println("\tL'erreur pour le seuillage doux pour le seuil V (PSNR) : " + listErreurPSNR[2]);
-        System.out.println("\n\tL'erreur pour le seuillage doux pour le seuil B (MSE) : " + listErreurMSE[3]);
-        System.out.println("\tL'erreur pour le seuillage doux pour le seuil B (PSNR) : " + listErreurPSNR[3]);
+        System.out.println("\tL'erreur pour le seuillage dur pour le seuil V (MSE) :" + listErreurMSE[0]);
+        System.out.println("\tL'erreur pour le seuillage dur pour le seuil V (PSNR) :" + listErreurPSNR[0]);
+        System.out.println("\n\tL'erreur pour le seuillage dur pour le seuil B (MSE) :" + listErreurMSE[1]);
+        System.out.println("\tL'erreur pour le seuillage dur pour le seuil B (PSNR) :" + listErreurPSNR[1]);
+        System.out.println("\n\tL'erreur pour le seuillage doux pour le seuil V (MSE) :" + listErreurMSE[2]);
+        System.out.println("\tL'erreur pour le seuillage doux pour le seuil V (PSNR) :" + listErreurPSNR[2]);
+        System.out.println("\n\tL'erreur pour le seuillage doux pour le seuil B (MSE) :" + listErreurMSE[3]);
+        System.out.println("\tL'erreur pour le seuillage doux pour le seuil B (PSNR) :" + listErreurPSNR[3]);
         System.out.println("Fin des erreurs !\n");
         
         //Ré-affichage de l'image restaurée

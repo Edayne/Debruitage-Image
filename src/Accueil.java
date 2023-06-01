@@ -34,6 +34,11 @@ public class Accueil extends Application {
 	
     ;//private String cheminImage;
     String cheminImage;
+    Photo imageEtudie;
+    double sigma;
+	ACP function=new ACP();
+
+    
 
 	@Override
     public void start(Stage primaryStage) throws Exception {
@@ -102,6 +107,8 @@ public class Accueil extends Application {
         	}else {
                  String chemin =t1.getText();
                  cheminImage=chemin;
+                 Photo p=new Photo(cheminImage);
+                 imageEtudie=p;
                 try {
                 	BufferedImage imaged=ImageIO.read(new File(chemin));
                     //conversion buffered image en image javafx
@@ -125,7 +132,7 @@ public class Accueil extends Application {
         
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------
         TextField t2=new TextField();
-        Label l2=new Label("Veuillez rentrer la avleur de sigma  : ");
+        Label l2=new Label("Veuillez rentrer la valeur de sigma  : ");
         Button btn_sigma=new Button("Valider");
         
         GridPane grid2=new GridPane();
@@ -151,6 +158,7 @@ public class Accueil extends Application {
                 String sig=t2.getText();
                 try {
                 	float sigma=Float.parseFloat(sig);
+                	this.sigma=sigma;
                 	try {
                 		Photo image = new Photo(cheminImage);
                         image.noising(image.getPhoto(), sigma);                                            
@@ -162,7 +170,7 @@ public class Accueil extends Application {
                 		Alert alerte = new Alert(AlertType.INFORMATION);
                       	alerte.setTitle("Erreur");
                       	alerte.setHeaderText(null);
-                      	alerte.setContentText("Veuillez choixir une image a bruitée.");
+                      	alerte.setContentText("Veuillez choisir une image a bruitée.");
                       	alerte.showAndWait();
                 	}                              	
                 }catch(NumberFormatException e) {
@@ -183,22 +191,25 @@ public class Accueil extends Application {
         
         Label l4=new Label("Veuillez selectioner le type de seuillage: ");
         ChoiceBox<String> t4 = new ChoiceBox<>();       
-        t4.getItems().addAll("Seuillage dur", "Seuillage doux"); 
+        t4.getItems().addAll("dur", "doux"); 
         
         Label l5=new Label("Veuillez selectioner le type de seuil: ");
         ChoiceBox<String> t5 = new ChoiceBox<>();       
-        t5.getItems().addAll("VisuSrhrink", "BayesSrhrink"); 
+        t5.getItems().addAll("seuilV", "seuilB"); 
         
-        Label l6=new Label("Valeur du seuil : ");
+        TextField t6=new TextField();
+        Label l6=new Label("Veuillez rentrer la valeur pour la taille des patch  : ");
+        
+        Label l7=new Label("Valeur du seuil :");
       
-        Label l7=new Label("Valeur de l'erreur : ");
+        Label l8=new Label("Valeur de l'erreur MSE :");
         
-        Label l8=new Label("Valeur de l'erreur  : ");
+        Label l9=new Label("Valeur de l'erreur PSNR :");
 
         
        
         
-        Button btn_seuil=new Button("Valider");
+        Button btn_debruitage=new Button("Débruiter");
         GridPane grid3=new GridPane();
         grid3.add(l3, 0, 0);
         grid3.add(t3, 1, 0);
@@ -206,10 +217,12 @@ public class Accueil extends Application {
         grid3.add(t4, 1, 1);
         grid3.add(l5, 0, 2);
         grid3.add(t5, 1, 2);
-        grid3.add(btn_seuil, 1, 3);
-        grid3.add(l6, 0, 4);
+        grid3.add(l6, 0, 3);
+        grid3.add(t6, 1, 3);
+        grid3.add(btn_debruitage, 1, 4);
         grid3.add(l7, 0, 5);
         grid3.add(l8, 0, 6);
+        grid3.add(l9, 0, 7);
 
         
         GridPane.setMargin(l3, margin);
@@ -223,11 +236,65 @@ public class Accueil extends Application {
         GridPane.setMargin(l7, margin);
         
         GridPane.setMargin(l8, margin);
+        
+        GridPane.setMargin(l9, margin);
 
 
        
-        
         boxFunction.getChildren().add(grid3);
+        
+        btn_debruitage.setOnAction(event->{
+        	if(t3.getValue()==null || t4.getValue()==null || t5.getValue()==null || t6.getText().isEmpty() ) {
+        		Alert alerte = new Alert(AlertType.INFORMATION);
+              	alerte.setTitle("Erreur");
+              	alerte.setHeaderText(null);
+              	alerte.setContentText("Veuiller remplir tous les champs.");
+              	alerte.showAndWait();
+        		
+        	}else {
+        		String choixPatch=t3.getValue();
+        		String n=t6.getText();
+        		int tailleImagette=0;
+        		String seuillage=t4.getValue();
+        		String typeSeuil=t5.getValue();
+
+        		try {
+        			int taillePatch =Integer.parseInt(n);
+        			//debruitage imaeg
+            		BufferedImage im=imageEtudie.ImageDen(cheminImage, sigma, choixPatch, taillePatch, tailleImagette, typeSeuil, seuillage);
+                    //conversion buffered image en image javafx
+            		if(typeSeuil.equalsIgnoreCase("seuilV")) {
+                		l7.setText("Valeur du seuil :" +function.VisuShrink(imageEtudie.getNbPixel(), sigma));
+
+            		}else {
+                		l7.setText("Valeur du seuil :" +function.BayesShrink(taillePatch, imageEtudie.getPhoto()));
+
+            		}            		
+            		l8.setText("Valeur de l'erreur MSE :"+function.calculateMSE(imageEtudie.getPhoto(), im));
+            		l9.setText("Valeur de l'erreur PSNR :"+function.calculatePSNR(imageEtudie.getPhoto(), im));
+                    WritableImage imageDebruitee = SwingFXUtils.toFXImage(im, null);                    
+            		// Attribution de l'image à l'ImageView                       
+                    imageView3.setImage(imageDebruitee);
+                    Alert alerte = new Alert(AlertType.INFORMATION);
+                	alerte.setTitle("Etat+");
+	            	alerte.setHeaderText(null);
+	           		alerte.setContentText("Débruitage terminé.");	
+	           		alerte.showAndWait();
+
+        		}catch(NumberFormatException e) {
+                	Alert alerte = new Alert(AlertType.INFORMATION);
+                	alerte.setTitle("Erreur");
+	            	alerte.setHeaderText(null);
+	           		alerte.setContentText("Veuillez entrer des entiers!");	
+	           		alerte.showAndWait();
+	           		System.out.println("La chaîne de caractères n'est pas un nombre valide.");
+                } 
+        		
+        		
+        	}
+        	
+        	
+        });
 
         
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------        
@@ -235,14 +302,14 @@ public class Accueil extends Application {
         VBox layout = new VBox();
         layout.getChildren().addAll(boxImage,boxFunction);        
         // Création de la scène
-        Scene scene = new Scene(layout,1610,700);        
+        Scene scene = new Scene(layout,1610,900);        
         // Configuration de la fenêtre principale
         primaryStage.setTitle("Débruitage d'image");      
         primaryStage.setScene(scene);
         primaryStage.show();
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         Application.launch(args);
     }
 }
