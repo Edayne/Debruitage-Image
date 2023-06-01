@@ -346,6 +346,27 @@ public class Photo {
         }
         return listImagette;
     }
+    
+    /**
+     * Découpe l'image en une collection d'images de taille W
+     * @param photo L'image initiale
+     * @param tailleW La taille des imagettes extraites
+     * @return Une collection de petites images
+     */
+    public ArrayList<BufferedImage> decoupeImage1(BufferedImage photo, int tailleW){
+        ArrayList<BufferedImage> listImagette = new ArrayList<>();
+        int L = photo.getHeight();
+        int C = photo.getWidth();
+        int nbImL = L/tailleW; 
+        int nbImC = C/tailleW;
+        for (int i = 0; i < nbImL; i++) {
+            for (int j = 0; j < nbImC; j++) {
+                BufferedImage imagette = photo.getSubimage(j*tailleW, i*tailleW, tailleW, tailleW);
+                listImagette.add(imagette);
+            }
+        }
+        return listImagette;
+    }
 
     /**
      * Transforme une liste de int[][] en une liste de int[], soit une vectorisation de matrice en s
@@ -554,8 +575,21 @@ public class Photo {
     		//il serait donc intéréssant de afctoriser le code pour éviter les répétitions
     		else {
     			ArrayList<BufferedImage> listImagette =photo.decoupeImage(photo.getPhotoBruitee(),tailleImagette);
+    			//on cree la liste qui va contenir les oimagettes reconstruites
+    			ArrayList<BufferedImage> listImagetteDebruite=new ArrayList<>();
+    			//pour chaque imagette on effectue un debruitage gloobal
     			for(BufferedImage image: listImagette) {
         	    	//List<int[][]> patch=photo.extractPatchs(taillePatch);
+    					Photo imagette=new Photo(null);
+    				 	imagette.setPhoto(image); 
+    				 	imagette.setNbC(image.getWidth());
+    				 	imagette.setNbL(image.getHeight());
+    		            imagette.setNbPixel(imagette.getNbC()*imagette.getNbL());
+    		            listImagetteDebruite.add(imagette.ImageDen(chemin, sigma, "global", taillePatch, tailleImagette, typeSeuil, seuillage));
+    			}
+    			//il faut reconstruire les imagettes a partir de la liste des imagettes debruitées
+    			for(int i=0; i<photo.nbL;i++) {
+    				
     			}
     			return photo.getPhotoBruitee();
     		}
