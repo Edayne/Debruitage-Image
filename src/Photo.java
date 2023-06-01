@@ -279,11 +279,10 @@ public class Photo {
                 } else {
                     sommePatch[i][j] /= 1;
                 }
-                //sommePatch[i][j] = (255 - sommePatch[i][j])%255; 
             }
         }
         
-        BufferedImage image = arrayToImage(sommePatch); //On convertit la matrice en un format d'image
+        BufferedImage image = arrayToImage(sommePatch); //On convertit la matrice en un format d'image visible
         
         return image;
     }

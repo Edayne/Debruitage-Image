@@ -8,6 +8,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import java.awt.FlowLayout;
 import javax.swing.ImageIcon;
+import java.util.Scanner;
 
 public class Main {
 	// ImageIO.read(PerformanceTest.class.getResource("donnees/lena.jpg"));
@@ -35,7 +36,9 @@ public class Main {
         // }
 
         //Bruitage de l'image
-        double sigma = 10.0;
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Entrez sigma : ");
+        double sigma = scanner.nextDouble();
         double sigma2 = sigma*sigma;
         lena.noising(lena.getPhoto(), sigma);
 
@@ -46,10 +49,12 @@ public class Main {
         frame.getContentPane().add(new JLabel(new ImageIcon(lena.getPhotoBruitee())));
         frame.setTitle("Image bruitée : sigma^2 = "+ sigma2);
         frame.pack();
-        frame.setVisible(true);
+        frame.setVisible(false);
 
         //Extraction des patchs et vectorisation
-        int taillePatch = 7;
+        System.out.print("Entrez la taille des patchs que vous souhaitez utiliser (évitez de dépasser 10-15): ");
+        int taillePatch = scanner.nextInt();
+        scanner.close();
 
         System.out.println("Démarrage de l'extraction des patchs... (s = "+taillePatch+")");
         ArrayList<int[][]> listPatches = lena.extractPatchs(lena.getPhotoBruitee(), taillePatch);
@@ -151,14 +156,16 @@ public class Main {
         listErreurPSNR[2] = outilsAcp.calculatePSNR(lena.getPhoto(), imageDouxV);
         listErreurPSNR[3] = outilsAcp.calculatePSNR(lena.getPhoto(), imageDouxB);
         
-        System.out.println("\tL'erreur pour le seuillage dur pour le seuil V (MSE) : " + listErreurMSE[0]);
+        System.out.println("\tL'erreur entre l'image initiale et l'image bruitée est (MSE) : " + outilsAcp.calculateMSE(lena.getPhoto(), lena.getPhotoBruitee()));
+        System.out.println("\tL'erreur entre l'image initiale et l'image bruitée est (PSNR) : " + outilsAcp.calculatePSNR(lena.getPhoto(), lena.getPhotoBruitee()));
+        System.out.println("\n\tL'erreur pour le seuillage dur pour le seuil V (MSE) : " + listErreurMSE[0]);
         System.out.println("\tL'erreur pour le seuillage dur pour le seuil V (PSNR) : " + listErreurPSNR[0]);
-        System.out.println("\n\tL'erreur pour le seuillage dur pour le seuil B (MSE) : " + listErreurMSE[1]);
-        System.out.println("\tL'erreur pour le seuillage dur pour le seuil B (PSNR) : " + listErreurPSNR[1]);
+        //System.out.println("\n\tL'erreur pour le seuillage dur pour le seuil B (MSE) : " + listErreurMSE[1]);
+        //System.out.println("\tL'erreur pour le seuillage dur pour le seuil B (PSNR) : " + listErreurPSNR[1]);
         System.out.println("\n\tL'erreur pour le seuillage doux pour le seuil V (MSE) : " + listErreurMSE[2]);
         System.out.println("\tL'erreur pour le seuillage doux pour le seuil V (PSNR) : " + listErreurPSNR[2]);
-        System.out.println("\n\tL'erreur pour le seuillage doux pour le seuil B (MSE) : " + listErreurMSE[3]);
-        System.out.println("\tL'erreur pour le seuillage doux pour le seuil B (PSNR) : " + listErreurPSNR[3]);
+        //System.out.println("\n\tL'erreur pour le seuillage doux pour le seuil B (MSE) : " + listErreurMSE[3]);
+        //System.out.println("\tL'erreur pour le seuillage doux pour le seuil B (PSNR) : " + listErreurPSNR[3]);
         System.out.println("Fin des erreurs !\n");
         
         //Ré-affichage de l'image restaurée
@@ -168,14 +175,13 @@ public class Main {
         // BufferedImage nvImageDouxV = lena.toBufferedImage(listDebDouxV);
         // BufferedImage nvImageDouxB = lena.toBufferedImage(listDebDouxB);
 
-        
 
         JFrame frameDurV = new JFrame();
         frameDurV.getContentPane().setLayout(new FlowLayout());
         frameDurV.setTitle("Dur V");
         frameDurV.getContentPane().add(new JLabel(new ImageIcon(imageDurV2)));
         frameDurV.pack();
-        frameDurV.setVisible(true);
+        frameDurV.setVisible(false);
 
         JFrame frameDurB = new JFrame();
         frameDurB.getContentPane().setLayout(new FlowLayout());
@@ -189,7 +195,7 @@ public class Main {
         frameDouxV.setTitle("Doux V");
         frameDouxV.getContentPane().add(new JLabel(new ImageIcon(imageDouxV)));
         frameDouxV.pack();
-        frameDouxV.setVisible(true);
+        frameDouxV.setVisible(false);
 
         JFrame frameDouxB = new JFrame();
         frameDouxB.getContentPane().setLayout(new FlowLayout());
@@ -206,8 +212,6 @@ public class Main {
         // for (int i=0; i<projection[0].length; i++){
         //     somme += projection[0][i]*baseACP[i][0]; //somme des alpha_i pour V1 
         // }
-        // System.out.println(somme);
-
-        
+        // System.out.println(somme); 
     }
 }
