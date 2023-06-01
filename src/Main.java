@@ -37,7 +37,7 @@ public class Main {
 
         //Bruitage de l'image
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Entrez sigma : ");
+        System.out.print("Entrez sigma : ");
         double sigma = scanner.nextDouble();
         double sigma2 = sigma*sigma;
         lena.noising(lena.getPhoto(), sigma);
@@ -52,11 +52,11 @@ public class Main {
         frame.setVisible(false);
 
         //Extraction des patchs et vectorisation
-        System.out.print("Entrez la taille des patchs que vous souhaitez utiliser (évitez de dépasser 10-15): ");
+        System.out.print("\nEntrez la taille des patchs que vous souhaitez utiliser (évitez de dépasser 10-15): ");
         int taillePatch = scanner.nextInt();
         scanner.close();
 
-        System.out.println("Démarrage de l'extraction des patchs... (s = "+taillePatch+")");
+        System.out.println("\nDémarrage de l'extraction des patchs... (s = "+taillePatch+")");
         ArrayList<int[][]> listPatches = lena.extractPatchs(lena.getPhotoBruitee(), taillePatch);
         int[][] posPatchs = lena.extractPosPatchs(lena.getPhotoBruitee(), taillePatch);
         System.out.println("\tNombre de patchs extraits = " + listPatches.size());
@@ -124,7 +124,8 @@ public class Main {
 
         System.out.print("\tSeuil B dur...");
         ArrayList<double[]> listDebDurB = lena.ImageDebr(projSeuilDurB, mV, baseACP);
-        BufferedImage imageDurB = lena.toBufferedImage(listDebDurB);
+        ArrayList<double[][]> listDebDurB2 = lena.unvectorizeList(listDebDurB);
+        BufferedImage imageDurB = lena.reconstructPatch(listDebDurB2, posPatchs);
         System.out.println("\tTerminé !");
 
         System.out.print("\tSeuil V doux...");
@@ -136,7 +137,8 @@ public class Main {
 
         System.out.print("\tSeuil B doux...");
         ArrayList<double[]> listDebDouxB = lena.ImageDebr(projSeuilDouxB, mV, baseACP);
-        BufferedImage imageDouxB = lena.toBufferedImage(listDebDouxB);
+        ArrayList<double[][]> listDebDouxB2 = lena.unvectorizeList(listDebDouxB);
+        BufferedImage imageDouxB = lena.reconstructPatch(listDebDouxB2, posPatchs);
         System.out.println("\tTerminé !");
 
         System.out.println("Fin du débruitage !\n");
@@ -158,14 +160,14 @@ public class Main {
         
         System.out.println("\tL'erreur entre l'image initiale et l'image bruitée est (MSE) : " + outilsAcp.calculateMSE(lena.getPhoto(), lena.getPhotoBruitee()));
         System.out.println("\tL'erreur entre l'image initiale et l'image bruitée est (PSNR) : " + outilsAcp.calculatePSNR(lena.getPhoto(), lena.getPhotoBruitee()));
-        System.out.println("\n\tL'erreur pour le seuillage dur pour le seuil V (MSE) : " + listErreurMSE[0]);
-        System.out.println("\tL'erreur pour le seuillage dur pour le seuil V (PSNR) : " + listErreurPSNR[0]);
-        //System.out.println("\n\tL'erreur pour le seuillage dur pour le seuil B (MSE) : " + listErreurMSE[1]);
-        //System.out.println("\tL'erreur pour le seuillage dur pour le seuil B (PSNR) : " + listErreurPSNR[1]);
-        System.out.println("\n\tL'erreur pour le seuillage doux pour le seuil V (MSE) : " + listErreurMSE[2]);
-        System.out.println("\tL'erreur pour le seuillage doux pour le seuil V (PSNR) : " + listErreurPSNR[2]);
-        //System.out.println("\n\tL'erreur pour le seuillage doux pour le seuil B (MSE) : " + listErreurMSE[3]);
-        //System.out.println("\tL'erreur pour le seuillage doux pour le seuil B (PSNR) : " + listErreurPSNR[3]);
+        //System.out.println("\n\tL'erreur pour le seuillage dur pour le seuil V (MSE) : " + listErreurMSE[0]);
+        //System.out.println("\tL'erreur pour le seuillage dur pour le seuil V (PSNR) : " + listErreurPSNR[0]);
+        System.out.println("\n\tL'erreur pour le seuillage dur pour le seuil B (MSE) : " + listErreurMSE[1]);
+        System.out.println("\tL'erreur pour le seuillage dur pour le seuil B (PSNR) : " + listErreurPSNR[1]);
+        //System.out.println("\n\tL'erreur pour le seuillage doux pour le seuil V (MSE) : " + listErreurMSE[2]);
+        //System.out.println("\tL'erreur pour le seuillage doux pour le seuil V (PSNR) : " + listErreurPSNR[2]);
+        System.out.println("\n\tL'erreur pour le seuillage doux pour le seuil B (MSE) : " + listErreurMSE[3]);
+        System.out.println("\tL'erreur pour le seuillage doux pour le seuil B (PSNR) : " + listErreurPSNR[3]);
         System.out.println("Fin des erreurs !\n");
         
         //Ré-affichage de l'image restaurée
