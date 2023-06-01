@@ -32,7 +32,7 @@ import javafx.scene.control.ListView;
 public class Accueil extends Application {
 
 	
-    ;//private String cheminImage;
+    //private String cheminImage;
     String cheminImage;
     Photo imageEtudie;
     double sigma;
@@ -276,7 +276,7 @@ public class Accueil extends Application {
             		// Attribution de l'image à l'ImageView                       
                     imageView3.setImage(imageDebruitee);
                     Alert alerte = new Alert(AlertType.INFORMATION);
-                	alerte.setTitle("Etat+");
+                	alerte.setTitle("Etat");
 	            	alerte.setHeaderText(null);
 	           		alerte.setContentText("Débruitage terminé.");	
 	           		alerte.showAndWait();

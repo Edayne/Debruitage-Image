@@ -11,10 +11,7 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/jama">
-		<attributes>
-			<attribute name="module" value="true"/>
-		</attributes>
-	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/JAvafx"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/jama"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
