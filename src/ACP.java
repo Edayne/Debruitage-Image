@@ -39,13 +39,9 @@ public class ACP {
         double variance;
         moyenne =somme/(l*c);
         moyCarr=sommeCarr/(l*c);
-        variance=moyCarr-moyenne;
+        variance=moyCarr-moyenne*moyenne;
 
-        if (variance-(s*s) <=0){
-            return(0);
-        }else{
-            return(Math.sqrt(variance-(s*s)));
-        }
+        return 2*(s*s)/Math.sqrt(Math.abs(variance-(s*s)));
     }
     
     /**
