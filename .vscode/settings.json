@@ -9,5 +9,6 @@
         "/data/Downloads/javaFXSDK/javafx-sdk-17.0.7/lib/javafx.swing.jar",
         "/data/Downloads/javaFXSDK/javafx-sdk-17.0.7/lib/javafx.media.jar",
         "/data/Downloads/javaFXSDK/javafx-sdk-17.0.7/lib/javafx.fxml.jar"
-    ]
+    ],
+    "java.debug.settings.onBuildFailureProceed": true
 }

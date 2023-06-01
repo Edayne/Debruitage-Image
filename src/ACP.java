@@ -14,7 +14,7 @@ public class ACP {
      * @return renvoit le seuil calculé par la méthode VisuShrink
      */
     public double VisuShrink(int nbPix, double s){
-        return(s*Math.sqrt(2*Math.log(nbPix)));
+        return(s*Math.sqrt(2*Math.log((double)nbPix)));
     }
 
     /**
@@ -111,12 +111,13 @@ public class ACP {
 
         for (int i = 0; i < l; i++) {
             for (int j = 0; j < c; j++) {
-                double diff = X.getRGB(i, j) - Y.getRGB(i, j);
+                double pixelX = (X.getRGB(i, j)>>16)&0xFF;
+                double pixelY = (Y.getRGB(i, j)>>16)&0xFF;
+                double diff = pixelX - pixelY;
                 MSE += diff * diff;
             }
         }
-
-        MSE = 1/(l * c);
+        MSE = MSE/(l * c);
 
         return MSE;
     }
@@ -212,6 +213,7 @@ public class ACP {
     public Matrix vecteurnormalise (Matrix vectPropre){
         int nbL = vectPropre.getRowDimension(); //Récupère nombre ligne
         int nbC = vectPropre.getColumnDimension(); //Récupère nombre colonne
+
         for (int i=0; i<nbC; i++){ // Pour chaque vecteur propre
             Matrix vecteurn = vectPropre.getMatrix(0,nbL-1,i,i); //Extrait les vecteurs propres de la matrice
             double norm = vecteurn.normF(); //Calcule la norme de chaque vecteur
@@ -219,6 +221,20 @@ public class ACP {
             vectPropre.setMatrix(0,nbL-1,i,i,vecteurn); //Remplace dans la matrice d'origine les vecteurs propres par les vecteurs propres normalisés
         }
         return vectPropre;
+    }
+
+    /**
+     * 
+     * @param X
+     * @param Y
+     * @return
+     */
+    public double pdtScal(double[] X, double[] Y) {
+        double resultat=0;
+        for (int i = 0; i < X.length; i++) {
+            resultat += X[i]*Y[i]; 
+        }
+        return resultat;
     }
 
     public double[][] acp (ArrayList<int[]> V){
@@ -243,6 +259,7 @@ public class ACP {
     public double[][] proj(double[][] U, ArrayList<double[]> V_centree ){
         int nbVecteurs = V_centree.size(); //yavait écrit U.length avant
         int dimACP = U[0].length;
+        
         double[][] projection = new double[nbVecteurs][dimACP];
 
         int k = 0; //Indice du vecteur actuel

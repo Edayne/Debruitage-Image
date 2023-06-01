@@ -17,26 +17,40 @@ public class Main {
 		Photo lena = new Photo("donnees/lena.png"); //Stocke l'image et les méthodes des patchs
         ACP outilsAcp = new ACP(); //Boîte à outils mathématique
 
-        double sigma2 = 10.0;
-        double sigma = Math.sqrt(sigma2);
-        for (int i=1; i<4; i++) {
-            //Bruitage de l'image
-            sigma2 = i*10.0;
-            sigma = Math.sqrt(sigma2);
-            lena.noising(lena.getPhoto(), sigma2);
+        // double sigma2 = 20.0;
+        // double sigma = Math.sqrt(sigma2);
+        // for (int i=1; i<4; i++) {
+        //     //Bruitage de l'image
+        //     sigma2 = i*10.0;
+        //     sigma = Math.sqrt(sigma2);
+        //     lena.noising(lena.getPhoto(), sigma2);
 
-            //Affichage d'une image
-            JFrame frame = new JFrame();
-            frame.getContentPane().setLayout(new FlowLayout());
-            frame.getContentPane().add(new JLabel(new ImageIcon(lena.getPhoto())));
-            frame.getContentPane().add(new JLabel(new ImageIcon(lena.getPhotoBruitee())));
-            frame.setTitle("Image bruitée : sigma^2 = "+ sigma2);
-            frame.pack();
-            frame.setVisible(true);
-        }
+        //     //Affichage d'une image
+        //     JFrame frame = new JFrame();
+        //     frame.getContentPane().setLayout(new FlowLayout());
+        //     frame.getContentPane().add(new JLabel(new ImageIcon(lena.getPhoto())));
+        //     frame.getContentPane().add(new JLabel(new ImageIcon(lena.getPhotoBruitee())));
+        //     frame.setTitle("Image bruitée : sigma^2 = "+ sigma2);
+        //     frame.pack();
+        //     frame.setVisible(true);
+        // }
+
+        //Bruitage de l'image
+        double sigma = 10.0;
+        double sigma2 = sigma*sigma;
+        lena.noising(lena.getPhoto(), sigma);
+
+        //Affichage d'une image
+        JFrame frame = new JFrame();
+        frame.getContentPane().setLayout(new FlowLayout());
+        frame.getContentPane().add(new JLabel(new ImageIcon(lena.getPhoto())));
+        frame.getContentPane().add(new JLabel(new ImageIcon(lena.getPhotoBruitee())));
+        frame.setTitle("Image bruitée : sigma^2 = "+ sigma2);
+        frame.pack();
+        frame.setVisible(true);
 
         //Extraction des patchs et vectorisation
-        int taillePatch = 3;
+        int taillePatch = 7;
 
         System.out.println("Démarrage de l'extraction des patchs... (s = "+taillePatch+")");
         ArrayList<int[][]> listPatches = lena.extractPatchs(lena.getPhotoBruitee(), taillePatch);
@@ -98,82 +112,103 @@ public class Main {
         System.out.println("Début du débruitage...");
 
         System.out.print("\tSeuil V dur...");
-        List<double[]> listDebDurV = lena.ImageDebr(projSeuilDurV, mV, baseACP);
-        BufferedImage imageDurV = lena.toBufferedImage(listDebDurV); 
-        //PB ICI, listDebDurV devrait contenir la liste des patchs vectorisés donc une liste de taille 250k à peu pres mais il n'y a que s^2=9 vecteurs on dirait
+        ArrayList<double[]> listDebDurV = lena.ImageDebr(projSeuilDurV, mV, baseACP);
+        ArrayList<double[][]> listDebDurV2 = lena.unvectorizeList(listDebDurV);
+        BufferedImage imageDurV2 = lena.reconstructPatch(listDebDurV2, posPatchs);
+        //BufferedImage imageDurV = lena.toBufferedImage(listDebDurV); 
         System.out.println("\tTerminé !");
+
         System.out.print("\tSeuil B dur...");
-        List<double[]> listDebDurB = lena.ImageDebr(projSeuilDurB, mV, baseACP);
+        ArrayList<double[]> listDebDurB = lena.ImageDebr(projSeuilDurB, mV, baseACP);
         BufferedImage imageDurB = lena.toBufferedImage(listDebDurB);
         System.out.println("\tTerminé !");
+
         System.out.print("\tSeuil V doux...");
-        List<double[]> listDebDouxV = lena.ImageDebr(projSeuilDouxV, mV, baseACP);
-        BufferedImage imageDouxV = lena.toBufferedImage(listDebDouxV);
+        ArrayList<double[]> listDebDouxV = lena.ImageDebr(projSeuilDouxV, mV, baseACP);
+        ArrayList<double[][]> listDebDouxV2 = lena.unvectorizeList(listDebDouxV);
+        BufferedImage imageDouxV = lena.reconstructPatch(listDebDouxV2, posPatchs);
+        //BufferedImage imageDouxV = lena.toBufferedImage(listDebDouxV);
         System.out.println("\tTerminé !");
+
         System.out.print("\tSeuil B doux...");
-        List<double[]> listDebDouxB = lena.ImageDebr(projSeuilDouxB, mV, baseACP);
+        ArrayList<double[]> listDebDouxB = lena.ImageDebr(projSeuilDouxB, mV, baseACP);
         BufferedImage imageDouxB = lena.toBufferedImage(listDebDouxB);
         System.out.println("\tTerminé !");
+
         System.out.println("Fin du débruitage !\n");
 
         //Calcul des erreurs
-        System.out.println("Calcul des erreurs...");
+        System.out.println("Calcul des erreurs... (entre l'image initiale et l'image restaurée)");
         double[] listErreurMSE = new double[4];
         double[] listErreurPSNR = new double[4];
 
-        listErreurMSE[0] = outilsAcp.calculateMSE(lena.getPhoto(), imageDurV);
+        listErreurMSE[0] = outilsAcp.calculateMSE(lena.getPhoto(), imageDurV2);
         listErreurMSE[1] = outilsAcp.calculateMSE(lena.getPhoto(), imageDurB);
         listErreurMSE[2] = outilsAcp.calculateMSE(lena.getPhoto(), imageDouxV);
         listErreurMSE[3] = outilsAcp.calculateMSE(lena.getPhoto(), imageDouxB);
         
-        listErreurPSNR[0] = outilsAcp.calculatePSNR(lena.getPhoto(), imageDurV);
+        listErreurPSNR[0] = outilsAcp.calculatePSNR(lena.getPhoto(), imageDurV2);
         listErreurPSNR[1] = outilsAcp.calculatePSNR(lena.getPhoto(), imageDurB);
         listErreurPSNR[2] = outilsAcp.calculatePSNR(lena.getPhoto(), imageDouxV);
         listErreurPSNR[3] = outilsAcp.calculatePSNR(lena.getPhoto(), imageDouxB);
         
-        System.out.println("L'erreur pour le seuillage dur pour le seuil V (MSE) :" + listErreurMSE[0]);
-        System.out.println("L'erreur pour le seuillage dur pour le seuil V (PSNR) :" + listErreurPSNR[0]);
-        System.out.println("L'erreur pour le seuillage dur pour le seuil B (MSE) :" + listErreurMSE[1]);
-        System.out.println("L'erreur pour le seuillage dur pour le seuil B (PSNR) :" + listErreurPSNR[1]);
-        System.out.println("L'erreur pour le seuillage doux pour le seuil V (MSE) :" + listErreurMSE[2]);
-        System.out.println("L'erreur pour le seuillage doux pour le seuil V (PSNR) :" + listErreurPSNR[2]);
-        System.out.println("L'erreur pour le seuillage doux pour le seuil B (MSE) :" + listErreurMSE[3]);
-        System.out.println("L'erreur pour le seuillage doux pour le seuil B (PSNR) :" + listErreurPSNR[3]);
+        System.out.println("\tL'erreur pour le seuillage dur pour le seuil V (MSE) :" + listErreurMSE[0]);
+        System.out.println("\tL'erreur pour le seuillage dur pour le seuil V (PSNR) :" + listErreurPSNR[0]);
+        System.out.println("\n\tL'erreur pour le seuillage dur pour le seuil B (MSE) :" + listErreurMSE[1]);
+        System.out.println("\tL'erreur pour le seuillage dur pour le seuil B (PSNR) :" + listErreurPSNR[1]);
+        System.out.println("\n\tL'erreur pour le seuillage doux pour le seuil V (MSE) :" + listErreurMSE[2]);
+        System.out.println("\tL'erreur pour le seuillage doux pour le seuil V (PSNR) :" + listErreurPSNR[2]);
+        System.out.println("\n\tL'erreur pour le seuillage doux pour le seuil B (MSE) :" + listErreurMSE[3]);
+        System.out.println("\tL'erreur pour le seuillage doux pour le seuil B (PSNR) :" + listErreurPSNR[3]);
         System.out.println("Fin des erreurs !\n");
         
         //Ré-affichage de l'image restaurée
         System.out.println("Affichage des images restaurées...");
-        BufferedImage nvImageDurV = lena.toBufferedImage(listDebDurV);
-        BufferedImage nvImageDurB = lena.toBufferedImage(listDebDurB);
-        BufferedImage nvImageDouxV = lena.toBufferedImage(listDebDouxV);
-        BufferedImage nvImageDouxB = lena.toBufferedImage(listDebDouxB);
+        // BufferedImage nvImageDurV = lena.toBufferedImage(listDebDurV);
+        // BufferedImage nvImageDurB = lena.toBufferedImage(listDebDurB);
+        // BufferedImage nvImageDouxV = lena.toBufferedImage(listDebDouxV);
+        // BufferedImage nvImageDouxB = lena.toBufferedImage(listDebDouxB);
+
+        
 
         JFrame frameDurV = new JFrame();
         frameDurV.getContentPane().setLayout(new FlowLayout());
         frameDurV.setTitle("Dur V");
-        frameDurV.getContentPane().add(new JLabel(new ImageIcon(nvImageDurV)));
+        frameDurV.getContentPane().add(new JLabel(new ImageIcon(imageDurV2)));
         frameDurV.pack();
         frameDurV.setVisible(true);
 
         JFrame frameDurB = new JFrame();
         frameDurB.getContentPane().setLayout(new FlowLayout());
         frameDurB.setTitle("Dur B");
-        frameDurB.getContentPane().add(new JLabel(new ImageIcon(nvImageDurB)));
+        frameDurB.getContentPane().add(new JLabel(new ImageIcon(imageDurB)));
         frameDurB.pack();
-        frameDurB.setVisible(true);
+        frameDurB.setVisible(false);
 
         JFrame frameDouxV = new JFrame();
         frameDouxV.getContentPane().setLayout(new FlowLayout());
         frameDouxV.setTitle("Doux V");
-        frameDouxV.getContentPane().add(new JLabel(new ImageIcon(nvImageDouxV)));
+        frameDouxV.getContentPane().add(new JLabel(new ImageIcon(imageDouxV)));
         frameDouxV.pack();
         frameDouxV.setVisible(true);
 
         JFrame frameDouxB = new JFrame();
         frameDouxB.getContentPane().setLayout(new FlowLayout());
         frameDouxB.setTitle("Doux B");
-        frameDouxB.getContentPane().add(new JLabel(new ImageIcon(nvImageDouxB)));
+        frameDouxB.getContentPane().add(new JLabel(new ImageIcon(imageDouxB)));
         frameDouxB.pack();
-        frameDouxB.setVisible(true);
+        frameDouxB.setVisible(false);
+
+        System.out.println("\nFIN!");
+
+        // System.out.println(listVectPatchCent.get(0)[0]);
+        // double somme = 0;
+
+        // for (int i=0; i<projection[0].length; i++){
+        //     somme += projection[0][i]*baseACP[i][0]; //somme des alpha_i pour V1 
+        // }
+        // System.out.println(somme);
+
+        
     }
 }

@@ -9,7 +9,6 @@ import javax.imageio.ImageIO;
 import java.io.File;
 import java.util.Random;
 
-
 public class Photo {
     //Attributes
     private BufferedImage photo;
@@ -91,6 +90,7 @@ public class Photo {
         nbL = photo.getHeight();
         nbC = photo.getWidth();
         this.photoBruitee = new BufferedImage(nbC, nbL, BufferedImage.TYPE_INT_RGB);
+
         for(int i=0; i<nbL;i++){
             for(int j=0; j<nbC;j++){
                 Random random = new Random();
@@ -192,8 +192,8 @@ public class Photo {
     /**
      * Fonction secondaire de extractPatchs() permettant de mettre à jour la position des patchs
      * @param pospat Matrice contenant la position des patchs
-     * @param listL 
-     * @param listC
+     * @param listL Les indices de lignes atteints par le patch actuel
+     * @param listC Les indices de colonnes atteints par le patch actuel
      */
     public static void updatePospat(int[][] pospat, ArrayList<Integer> listL, ArrayList<Integer> listC) {
         for (int i = 0; i < listL.size(); i++) {
@@ -211,21 +211,23 @@ public class Photo {
     public BufferedImage arrayToImage(int[][] matrix) {
         int width = matrix.length;
         int height = matrix[0].length;
-        System.out.println("width =" + width + "\theight = " + height);
-        BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+
+        BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_GRAY);
+
         for (int i = 0; i < matrix.length; i++) {
             for (int j = 0; j < matrix[0].length; j++) {
-                int pixel=matrix[i][j];
-                System.out.println("The pixel in Matrix: "+pixel);
-                bufferedImage.setRGB(i, j, pixel);
-                System.out.println("The pixel in BufferedImage: " + bufferedImage.getRGB(i, j));
+                int rgb = (int)matrix[i][j]<<16 | (int)matrix[i][j] << 8 | (int)matrix[i][j];
+                //int rgb = (int) Math.floor(matrix[i][j]);
+                int[] pixel = new int[1];
+                pixel[0] = rgb;
+                bufferedImage.getRaster().setPixel(i, j, pixel);
             }
         }
         return bufferedImage;
     }
 
     /**
-     * Convertit une BufferedImage en matric
+     * Convertit une BufferedImage en matrice
      * @param bufferedImage une image
      * @return une matrice d'entiers
      */
@@ -243,33 +245,76 @@ public class Photo {
 
     /**
      * Reconstruit une image à partir d'une collection de patchs
-     * @param listPatchs Liste des patchs extraits
+     * @param listPatchs Liste des patchs extraits7
      * @param posPatchs Matrice contenant le nombre de patchs dans lequel le pixel à la coordonnée associée apparait
      * @return L'image recréée
      */
-    public BufferedImage reconstructPatch(ArrayList<int[][]> listPatchs, int[][] posPatchs) {
+    public BufferedImage reconstructPatch(ArrayList<double[][]> listPatchs, int[][] posPatchs) {
         int s = listPatchs.get(0).length; //Taille d'un patch
+
         int L = posPatchs.length;
         int C = posPatchs[0].length;
         int[][] sommePatch = new int[L][C];
+
+        int k=0;
+
+        //On fait la somme de tous les patchs sur la matrice en fonction de leur position
         for (int j = 0; j < C-s; j++){
             for (int i = 0; i < L-s; i++) {
-                int[][] patchActuel = new int[s][s];
+                double[][] patchActuel = listPatchs.get(k);
                 for (int iPatch = 0; iPatch<s; iPatch++){
                     for (int jPatch = 0; jPatch<s; jPatch++) {
                         sommePatch[i][j] += patchActuel[iPatch][jPatch];
                     }
                 }
+                k++;
             }
-        }
+        } 
+
+        //On calcule la moyenne par pixel des sommes précedemment calculées
         for (int i = 0; i < L; i++) {
             for (int j = 0; j < C; j++) {
-                sommePatch[i][j] /= posPatchs[i][j];
+                if (posPatchs[i][j] != 0) {
+                    sommePatch[i][j] /= posPatchs[i][j];
+                } else {
+                    sommePatch[i][j] /= 1;
+                }
+                //sommePatch[i][j] = (255 - sommePatch[i][j])%255; 
             }
         }
         
         BufferedImage image = arrayToImage(sommePatch); //On convertit la matrice en un format d'image
+        
         return image;
+    }
+
+    /**
+     * Convertit un vecteur en une matrice
+     * @param vecteur Un vecteur de réel
+     * @return Renvoit le même vecteur sous forme matricielle
+     */
+    public double[][] unvectorize(double[] vecteur){
+        int taillePatch = (int) Math.sqrt(vecteur.length);
+        double[][] matrice = new double[taillePatch][taillePatch];
+
+        int k=0;
+        for (int i = 0; i < taillePatch; i++) {
+            for (int j = 0; j < taillePatch; j++) {
+                matrice[i][j] = vecteur[k];
+                k++;
+            }
+        }
+        return matrice;
+    }
+
+    public ArrayList<double[][]> unvectorizeList(ArrayList<double[]> listVectors) {
+        ArrayList<double[][]> listMatrice = new ArrayList<>();
+        for (double[] vector : listVectors) {
+            double[][] matrice = this.unvectorize(vector);
+            listMatrice.add(matrice);
+        }
+
+        return listMatrice;
     }
 
     /**
@@ -317,56 +362,60 @@ public class Photo {
     }
     
     /**
-     * 
+     * Recrée une liste de patchs vectorisés après seuillage, ie les Z_k décrits dans l'énoncé
      * @param coefPostSeuil Matrice des coefficients de la projection des patchs vectorisés dans la base de l'ACP après le seuillage
      * @param mV Vecteur moyen des patchs
      * @param base Matrice de la base orthnormale donnée par l'ACP
      * @return Liste des nouveaux patchs
      */
-    public List<double[]> ImageDebr(double[][] coefPostSeuil, double[] mV, double[][] base) {
-    	List<double[]> nvPatchList = new ArrayList<>();
+    public ArrayList<double[]> ImageDebr(double[][] coefPostSeuil, double[] mV, double[][] base) {
+    	ArrayList<double[]> nvPatchList = new ArrayList<>();
         int nbVecteurs = coefPostSeuil.length;
         int nbCoord = coefPostSeuil[0].length;
-        for (int i = 0; i < nbVecteurs; i++) {
-            double[] nvVecteur = new double[mV.length]; //correspond au Z_i de l'énoncé
-            for (int j = 0; j < nbCoord; j++) {
-                nvVecteur[j] = mV[j] + coefPostSeuil[i][j]*base[i][j];
+        for (int k = 0; k < nbVecteurs; k++) {
+            double[] nvVecteur = new double[mV.length]; //correspond au Z_k de l'énoncé
+            
+            //On initialise Z_k égal à mV
+            for (int i=0; i<nbCoord; i++){
+                nvVecteur[i] = mV[i];
+            }
+
+            for (int i = 0; i < nbCoord; i++) {
+                for (int j=0; j<nbCoord; j++){
+                    nvVecteur[j] += coefPostSeuil[k][i]*base[j][i];
+                }
             }
             nvPatchList.add(nvVecteur);
         }
         return nvPatchList;
-    }
+    } 
 
     /**
      * Convertit une liste de vecteurs de réels en une image visible
      * @param listeVect Liste de vecteurs réels
      * @return Image sous le format BufferedImage
      */
-    public BufferedImage toBufferedImage(List<double[]> listeVect) {
-        BufferedImage image = new BufferedImage(nbL, nbC, 3);
+    public BufferedImage toBufferedImage(ArrayList<double[]> listeVect) {
+        BufferedImage image = new BufferedImage(nbL, nbC, BufferedImage.TYPE_BYTE_GRAY);
 
         for(int i=0; i<nbL; i++) {
             double[] vecteur = listeVect.get(i);
+            double[][] patch = this.unvectorize(vecteur);
+            double[] pixel = new double[1];
             int tailleVect = vecteur.length;
-            // System.out.println(listeVect.size());
-            // for (int k=0; k<tailleVect; k++){
-            //     System.out.println(vecteur[k]);
-            // }
+            int k =0;
             for(int j = 0; j < tailleVect; j++) {
                 int rgb = (int)vecteur[j]<<16 | (int)vecteur[j] << 8 | (int)vecteur[j];
-                image.setRGB(i, j, rgb);
+                pixel[0] = rgb;
+                image.getRaster().setPixel(i, j, pixel);
+                k++;
             }
-        }
-        try {
-            ImageIO.write(image, "Doublearray", new File("../donnes/Doublearray.jpg"));
-            System.out.println("end");
-        } catch (Exception e) {
-            System.err.println("IMPOSSIBLE D'ECRIRE ICI");
+            image.getRaster().setPixel(i, k, pixel);
         }
         return image;
     }
     
-    public BufferedImage toBufferedImageNUL(List<double[]> listeVect) {
+    public BufferedImage toBufferedImageNUL(ArrayList<double[]> listeVect) {
         BufferedImage image = new BufferedImage(nbL, nbC, 3);
         
         for(int i=0; i<nbL; i++) {
